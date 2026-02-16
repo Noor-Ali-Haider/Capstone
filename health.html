@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health & Wellness - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+        .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; text-decoration: none; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
+
+        /* Sports Team Section */
+        .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+        .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* --- Page Specific --- */
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .stat-card h3 { font-size: 2rem; font-weight: 700; }
+        .stat-card p { font-size: 0.875rem; color: #666; margin-top: 4px; }
+
+        .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+        
+        /* Tabs */
+        .tab-nav { display: flex; gap: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; }
+        .tab-btn { padding: 10px 20px; font-weight: 600; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; background: none; border-top: none; border-left: none; border-right: none; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-btn:hover { color: var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #fff; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        tr:hover td { background-color: #fcfcfc; }
+
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-active { background: #fce8e6; color: #c5221f; }
+        .status-recovering { background: #fff7e6; color: #f9ab00; }
+        .status-cleared { background: #e6f4ea; color: #1e8e3e; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 0.5rem; }
+        
+        .form-control { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 6px; padding: 8px 12px; font-size: 14px; width: 100%; }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR (Identical to Dashboard/Athletes) -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item active">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Health & Wellness</h2>
+                <p class="text-sm text-gray-500">Monitor injuries, recovery, and athlete wellness</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="stat-card border-l-4 border-red-500">
+                    <h3 id="stat-active">0</h3>
+                    <p>Active Injuries</p>
+                </div>
+                <div class="stat-card border-l-4 border-yellow-500">
+                    <h3 id="stat-recovery">0</h3>
+                    <p>In Recovery</p>
+                </div>
+                <div class="stat-card border-l-4 border-green-500">
+                    <h3 id="stat-cleared">0</h3>
+                    <p>Recovered</p>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tab-nav">
+                <button class="tab-btn active" onclick="switchTab('injuries')">Injury Reports</button>
+                <button class="tab-btn" onclick="switchTab('wellness')">Wellness Logs</button>
+            </div>
+
+            <!-- Table Section -->
+            <div class="card-box">
+                <div class="card-header">
+                    <h3 class="font-bold text-gray-800" id="tableTitle">Injury Reports</h3>
+                    <button class="bg-[#800020] text-white px-4 py-2 text-sm rounded-md font-semibold flex items-center gap-2 hover:opacity-90 transition" onclick="openModal()">
+                        <i class="bi bi-plus-lg"></i>
+                        Add Report
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead id="table-head">
+                            <!-- JS will inject headers -->
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- JS will inject rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ADD INJURY MODAL -->
+    <div id="addInjuryModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold text-lg">Report Injury</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><i class="bi bi-x-lg text-xl"></i></button>
+            </div>
+            <div class="modal-body space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Athlete Name</label>
+                    <input type="text" id="injAthlete" class="form-control" placeholder="e.g. Sarah Johnson">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sport</label>
+                        <select id="injSport" class="form-control">
+                            <option>Basketball</option>
+                            <option>Football</option>
+                            <option>Volleyball</option>
+                            <option>Padel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Injury Type</label>
+                        <input type="text" id="injType" class="form-control" placeholder="e.g. Ankle Sprain">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Details</label>
+                    <textarea id="injDetails" class="form-control" rows="2" placeholder="Brief description..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50">Cancel</button>
+                <button onclick="saveInjury()" class="px-4 py-2 bg-[#800020] text-white rounded-md hover:opacity-90">Save Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ==========================================
+        // 1. MOCK DATABASE (Replace with Database Connection later)
+        // ==========================================
+        const mockDB = {
+            injuries: [
+                { id: 1, athlete: "Marcus Davis", sport: "Football", type: "Hamstring Strain", status: "Recovering", date: "2026-09-28" },
+                { id: 2, athlete: "James Williams", sport: "Soccer", type: "Ankle Sprain", status: "Active", date: "2026-10-01" },
+                { id: 3, athlete: "Sarah Johnson", sport: "Basketball", type: "Knee Injury", status: "Cleared", date: "2026-09-15" }
+            ],
+            wellness: [
+                { id: 1, athlete: "Sarah Johnson", sleep: "8 hrs", stress: "Low", notes: "Feeling great", date: "2026-10-02" },
+                { id: 2, athlete: "Marcus Davis", sleep: "6 hrs", stress: "Medium", notes: "Slight fatigue", date: "2026-10-02" }
+            ]
+        };
+
+        // ==========================================
+        // 2. API SERVICE LAYER (Connects Frontend to Backend)
+        // ==========================================
+        
+        const api = {
+            getHealthStats: async () => {
+                // TODO: Replace with real API Call
+                // Calculate stats from injuries
+                const active = mockDB.injuries.filter(i => i.status === 'Active').length;
+                const recovering = mockDB.injuries.filter(i => i.status === 'Recovering').length;
+                const cleared = mockDB.injuries.filter(i => i.status === 'Cleared').length;
+                
+                return { active, recovering, cleared };
+            },
+
+            getInjuries: async () => {
+                // TODO: Replace with real API Call
+                return mockDB.injuries;
+            },
+
+            getWellnessLogs: async () => {
+                // TODO: Replace with real API Call
+                return mockDB.wellness;
+            },
+
+            addInjury: async (data) => {
+                // TODO: Replace with real API Call
+                const newId = mockDB.injuries.length + 1;
+                const newInjury = { id: newId, ...data, status: "Active", date: new Date().toISOString().split('T')[0] };
+                mockDB.injuries.push(newInjury);
+                return { success: true };
+            }
+        };
+
+        // ==========================================
+        // 3. UI LOGIC
+        // ==========================================
+        
+        let currentTab = 'injuries'; // 'injuries' or 'wellness'
+
+        window.onload = function() {
+            loadStats();
+            loadTabData();
+        };
+
+        async function loadStats() {
+            const stats = await api.getHealthStats();
+            document.getElementById('stat-active').innerText = stats.active;
+            document.getElementById('stat-recovery').innerText = stats.recovering;
+            document.getElementById('stat-cleared').innerText = stats.cleared;
+        }
+
+        async function loadTabData() {
+            const thead = document.getElementById('table-head');
+            const tbody = document.getElementById('table-body');
+            const title = document.getElementById('tableTitle');
+
+            if (currentTab === 'injuries') {
+                title.innerText = "Injury Reports";
+                thead.innerHTML = `<tr><th>Athlete</th><th>Sport</th><th>Injury Type</th><th>Date</th><th>Status</th></tr>`;
+                
+                const data = await api.getInjuries();
+                tbody.innerHTML = data.map(row => {
+                    let statusClass = 'status-active';
+                    if(row.status === 'Recovering') statusClass = 'status-recovering';
+                    if(row.status === 'Cleared') statusClass = 'status-cleared';
+
+                    return `
+                        <tr>
+                            <td class="font-medium">${row.athlete}</td>
+                            <td>${row.sport}</td>
+                            <td>${row.type}</td>
+                            <td>${row.date}</td>
+                            <td><span class="status-badge ${statusClass}">${row.status}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } else {
+                title.innerText = "Wellness Logs";
+                thead.innerHTML = `<tr><th>Athlete</th><th>Sleep</th><th>Stress Level</th><th>Notes</th><th>Date</th></tr>`;
+                
+                const data = await api.getWellnessLogs();
+                tbody.innerHTML = data.map(row => `
+                    <tr>
+                        <td class="font-medium">${row.athlete}</td>
+                        <td>${row.sleep}</td>
+                        <td>${row.stress}</td>
+                        <td>${row.notes}</td>
+                        <td>${row.date}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update active button style
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if(btn.innerText.toLowerCase().includes(tabName)) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            loadTabData();
+        }
+
+        function openModal() {
+            document.getElementById('addInjuryModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('addInjuryModal').classList.remove('show');
+        }
+
+        async function saveInjury() {
+            const data = {
+                athlete: document.getElementById('injAthlete').value,
+                sport: document.getElementById('injSport').value,
+                type: document.getElementById('injType').value,
+                details: document.getElementById('injDetails').value
+            };
+
+            if(!data.athlete || !data.type) {
+                alert("Please fill required fields.");
+                return;
+            }
+
+            await api.addInjury(data);
+            closeModal();
+            loadStats(); // Refresh stats
+            loadTabData(); // Refresh table
+        }
+    </script>
+</body>
+</html>

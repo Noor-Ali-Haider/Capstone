@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Check-In - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+        .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; text-decoration: none; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
+
+        /* Sports Team Section */
+        .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+        .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* --- Page Specific --- */
+        .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; max-width: 800px; margin: 0 auto; }
+        .card-header { padding: 1.5rem; border-bottom: 1px solid #f0f0f0; background: #fafafa; text-align: center; }
+        
+        .form-control { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 6px; padding: 10px 14px; font-size: 14px; width: 100%; transition: all 0.2s; }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(128,0,32,0.05); }
+        
+        .btn-primary { background: var(--primary); color: white; padding: 10px 20px; border-radius: 6px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; width: 100%; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Slider Styles */
+        .slider-container { position: relative; width: 100%; }
+        .slider-labels { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 8px; }
+        
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            cursor: pointer;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .check-in-summary { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 6px; margin-top: 1rem; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR (Identical to Dashboard/Athletes) -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item active">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Wellness Check-In</h2>
+                <p class="text-sm text-gray-500">Daily health and readiness monitoring</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <div class="card-box">
+                <div class="card-header">
+                    <i class="bi bi-clipboard2-pulse text-4xl text-[#800020] mb-2"></i>
+                    <h3 class="text-lg font-bold text-gray-800">Daily Check-In Form</h3>
+                    <p class="text-sm text-gray-500 mt-1">Select an athlete to begin</p>
+                </div>
+                
+                <div class="p-6">
+                    <!-- Step 1: Select Athlete -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Select Athlete</label>
+                        <select id="athleteSelect" class="form-control" onchange="loadAthleteData()">
+                            <option value="">-- Select Athlete --</option>
+                            <!-- Options injected via JS -->
+                        </select>
+                    </div>
+
+                    <!-- Step 2: Check-In Form (Initially Hidden) -->
+                    <div id="checkInForm" class="hidden space-y-6">
+                        
+                        <!-- Sleep Quality -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Sleep Quality
+                                <span class="text-xs text-gray-400 float-right" id="sleepVal">5 - Average</span>
+                            </label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="sleepQuality" oninput="updateSliderLabel('sleep')">
+                            <div class="slider-labels">
+                                <span>Very Poor</span>
+                                <span>Excellent</span>
+                            </div>
+                        </div>
+
+                        <!-- Stress Level -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Stress Level
+                                <span class="text-xs text-gray-400 float-right" id="stressVal">5 - Moderate</span>
+                            </label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="stressLevel" oninput="updateSliderLabel('stress')">
+                            <div class="slider-labels">
+                                <span>Very Stressed</span>
+                                <span>Very Relaxed</span>
+                            </div>
+                        </div>
+
+                        <!-- Muscle Soreness -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Muscle Soreness
+                                <span class="text-xs text-gray-400 float-right" id="sorenessVal">5 - Moderate</span>
+                            </label>
+                            <input type="range" min="1" max="10" value="5" class="slider" id="soreness" oninput="updateSliderLabel('soreness')">
+                            <div class="slider-labels">
+                                <span>Very Sore</span>
+                                <span>No Soreness</span>
+                            </div>
+                        </div>
+
+                        <!-- Hydration -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hydration Status</label>
+                            <select id="hydration" class="form-control">
+                                <option value="good">Well Hydrated (Clear Urine)</option>
+                                <option value="moderate">Moderately Hydrated</option>
+                                <option value="poor">Dehydrated (Dark Urine)</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                            <textarea id="notes" class="form-control" rows="2" placeholder="Any injuries, illness, or personal issues?"></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button class="btn-primary mt-4" onclick="submitCheckIn()">
+                            Submit Check-In
+                        </button>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <div id="successMessage" class="check-in-summary">
+                        <div class="flex items-center gap-3">
+                            <i class="bi bi-check-circle-fill text-green-600 text-2xl"></i>
+                            <div>
+                                <h4 class="font-bold text-green-800">Check-In Submitted!</h4>
+                                <p class="text-sm text-green-600">Data has been recorded successfully.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ==========================================
+        // 1. MOCK DATABASE (Replace with Database Connection later)
+        // ==========================================
+        const mockDB = {
+            athletes: [
+                { id: 1, name: "Sarah Johnson", sport: "Basketball" },
+                { id: 2, name: "James Williams", sport: "Soccer" },
+                { id: 3, name: "Marcus Davis", sport: "Football" },
+                { id: 4, name: "Lisa Thompson", sport: "Tennis" }
+            ],
+            checkIns: []
+        };
+
+        // ==========================================
+        // 2. API SERVICE LAYER (Connects Frontend to Backend)
+        // ==========================================
+        
+        const api = {
+            getActiveAthletes: async () => {
+                // TODO: Replace with real API Call
+                // return await fetch('/api/athletes/active').then(res => res.json());
+                console.log("API CALL: Fetching active athletes...");
+                return mockDB.athletes;
+            },
+
+            submitWellnessCheckIn: async (data) => {
+                // TODO: Replace with real API Call
+                // return await fetch('/api/wellness', { method: 'POST', body: JSON.stringify(data) });
+                console.log("API CALL: Submitting check-in...", data);
+                
+                mockDB.checkIns.push(data);
+                return { success: true, message: "Check-in recorded" };
+            }
+        };
+
+        // ==========================================
+        // 3. UI LOGIC
+        // ==========================================
+        
+        let selectedAthleteId = null;
+
+        window.onload = function() {
+            loadAthletes();
+        };
+
+        async function loadAthletes() {
+            const athletes = await api.getActiveAthletes();
+            const select = document.getElementById('athleteSelect');
+            
+            athletes.forEach(athlete => {
+                const option = document.createElement('option');
+                option.value = athlete.id;
+                option.textContent = `${athlete.name} (${athlete.sport})`;
+                select.appendChild(option);
+            });
+        }
+
+        function loadAthleteData() {
+            const select = document.getElementById('athleteSelect');
+            selectedAthleteId = select.value;
+            
+            const formDiv = document.getElementById('checkInForm');
+            const successDiv = document.getElementById('successMessage');
+
+            if (selectedAthleteId) {
+                formDiv.classList.remove('hidden');
+                successDiv.style.display = 'none';
+                
+                // Reset form fields
+                document.getElementById('sleepQuality').value = 5;
+                document.getElementById('stressLevel').value = 5;
+                document.getElementById('soreness').value = 5;
+                document.getElementById('hydration').value = 'good';
+                document.getElementById('notes').value = '';
+                updateSliderLabel('sleep');
+                updateSliderLabel('stress');
+                updateSliderLabel('soreness');
+
+            } else {
+                formDiv.classList.add('hidden');
+            }
+        }
+
+        function updateSliderLabel(type) {
+            if(type === 'sleep') {
+                const val = document.getElementById('sleepQuality').value;
+                document.getElementById('sleepVal').innerText = val + ' - ' + getQualityText(val);
+            }
+            if(type === 'stress') {
+                const val = document.getElementById('stressLevel').value;
+                document.getElementById('stressVal').innerText = val + ' - ' + getStressText(val);
+            }
+            if(type === 'soreness') {
+                const val = document.getElementById('soreness').value;
+                document.getElementById('sorenessVal').innerText = val + ' - ' + getSorenessText(val);
+            }
+        }
+
+        function getQualityText(val) {
+            if(val <= 3) return 'Poor';
+            if(val <= 6) return 'Average';
+            return 'Great';
+        }
+        function getStressText(val) {
+            if(val <= 3) return 'High Stress';
+            if(val <= 6) return 'Moderate';
+            return 'Relaxed';
+        }
+        function getSorenessText(val) {
+            if(val <= 3) return 'High Soreness';
+            if(val <= 6) return 'Moderate';
+            return 'Feeling Good';
+        }
+
+        async function submitCheckIn() {
+            const data = {
+                athleteId: selectedAthleteId,
+                date: new Date().toISOString().split('T')[0],
+                sleep: document.getElementById('sleepQuality').value,
+                stress: document.getElementById('stressLevel').value,
+                soreness: document.getElementById('soreness').value,
+                hydration: document.getElementById('hydration').value,
+                notes: document.getElementById('notes').value
+            };
+
+            const result = await api.submitWellnessCheckIn(data);
+
+            if(result.success) {
+                document.getElementById('checkInForm').classList.add('hidden');
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('athleteSelect').value = ''; // Reset select
+                selectedAthleteId = null;
+                
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

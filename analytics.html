@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+        .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; text-decoration: none; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
+
+        /* Sports Team Section */
+        .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+        .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* --- Page Specific --- */
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
+
+        .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Custom Chart Styles */
+        .bar-chart-container { display: flex; flex-direction: column; gap: 12px; padding: 1rem; }
+        .bar-row { display: flex; align-items: center; gap: 10px; }
+        .bar-label { width: 80px; font-size: 13px; font-weight: 500; color: #666; text-align: right; }
+        .bar-track { flex-grow: 1; background: #f0f0f0; height: 12px; border-radius: 6px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 6px; transition: width 1s ease-in-out; }
+        .bar-value { width: 40px; font-size: 13px; font-weight: 600; color: #333; }
+
+        .donut-container { position: relative; width: 200px; height: 200px; margin: 0 auto; }
+        .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        
+        .legend-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
+        .legend-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR (Identical to Dashboard/Athletes) -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item active">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Analytics Dashboard</h2>
+                <p class="text-sm text-gray-500">Performance insights and trends</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card border-l-4 border-[#800020]">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Total Athletes</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-total">0</h3>
+                        </div>
+                        <div class="p-3 bg-red-50 text-[#800020] rounded-md">
+                            <i class="bi bi-people-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card border-l-4 border-green-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Average GPA</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-gpa">0.00</h3>
+                        </div>
+                        <div class="p-3 bg-green-50 text-green-600 rounded-md">
+                            <i class="bi bi-book-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Avg Performance</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-perf">0%</h3>
+                        </div>
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-md">
+                            <i class="bi bi-trophy-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- GPA Distribution Chart -->
+                <div class="card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">GPA Distribution</h3>
+                    </div>
+                    <div class="bar-chart-container" id="gpaChart">
+                        <!-- JS renders here -->
+                    </div>
+                </div>
+
+                <!-- Athletes by Year Chart -->
+                <div class="card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Athletes by Year</h3>
+                    </div>
+                    <div class="p-6 flex flex-col md:flex-row items-center justify-center gap-8">
+                        <!-- Simple Donut Chart Canvas -->
+                        <div class="donut-container">
+                            <canvas id="yearChart" width="200" height="200"></canvas>
+                            <div class="donut-center">
+                                <h4 class="text-2xl font-bold" id="totalYearAthletes">0</h4>
+                                <p class="text-xs text-gray-500">Total</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Legend -->
+                        <div class="w-full md:w-48" id="yearLegend">
+                            <!-- JS renders here -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ==========================================
+        // 1. MOCK DATABASE (Replace with Database Connection later)
+        // ==========================================
+        const mockDB = {
+            stats: { total: 6, gpa: 3.58, performance: 86 },
+            athletes: [
+                { id: 1, name: "Sarah Johnson", year: "Junior", gpa: 3.70 },
+                { id: 2, name: "James Williams", year: "Freshman", gpa: 3.20 },
+                { id: 3, name: "Marcus Davis", year: "Senior", gpa: 3.45 },
+                { id: 4, name: "Lisa Thompson", year: "Junior", gpa: 3.90 },
+                { id: 5, name: "Robert Garcia", year: "Sophomore", gpa: 3.10 },
+                { id: 6, name: "Emily Chen", year: "Freshman", gpa: 2.80 }
+            ]
+        };
+
+        // ==========================================
+        // 2. API SERVICE LAYER (Connects Frontend to Backend)
+        // ==========================================
+        
+        const api = {
+            getAnalyticsStats: async () => {
+                // TODO: Replace with real API Call
+                // return await fetch('/api/analytics/stats').then(res => res.json());
+                console.log("API CALL: Fetching analytics stats...");
+                return mockDB.stats;
+            },
+
+            getGpaDistribution: async () => {
+                // TODO: Replace with real API Call
+                console.log("API CALL: Calculating GPA distribution...");
+                
+                // Helper logic (would normally happen on backend)
+                let dist = {
+                    "Excellent (3.5+)": 0,
+                    "Good (3.0-3.5)": 0,
+                    "Average (<3.0)": 0
+                };
+
+                mockDB.athletes.forEach(a => {
+                    if(a.gpa >= 3.5) dist["Excellent (3.5+)"]++;
+                    else if(a.gpa >= 3.0) dist["Good (3.0-3.5)"]++;
+                    else dist["Average (<3.0)"]++;
+                });
+
+                return dist;
+            },
+
+            getYearDistribution: async () => {
+                // TODO: Replace with real API Call
+                console.log("API CALL: Calculating Year distribution...");
+                
+                let dist = {};
+                mockDB.athletes.forEach(a => {
+                    if(!dist[a.year]) dist[a.year] = 0;
+                    dist[a.year]++;
+                });
+                return dist;
+            }
+        };
+
+        // ==========================================
+        // 3. UI LOGIC
+        // ==========================================
+
+        window.onload = function() {
+            loadStats();
+            loadGpaChart();
+            loadYearChart();
+        };
+
+        async function loadStats() {
+            const stats = await api.getAnalyticsStats();
+            document.getElementById('val-total').innerText = stats.total;
+            document.getElementById('val-gpa').innerText = stats.gpa.toFixed(2);
+            document.getElementById('val-perf').innerText = stats.performance + '%';
+        }
+
+        // --- GPA Bar Chart ---
+        async function loadGpaChart() {
+            const data = await api.getGpaDistribution();
+            const container = document.getElementById('gpaChart');
+            const maxVal = Math.max(...Object.values(data));
+
+            let html = '';
+            const colors = ['#22c55e', '#3b82f6', '#f97316']; // Green, Blue, Orange
+
+            let i = 0;
+            for (let key in data) {
+                const val = data[key];
+                const width = maxVal > 0 ? (val / maxVal) * 100 : 0;
+                
+                html += `
+                    <div class="bar-row">
+                        <div class="bar-label">${key}</div>
+                        <div class="bar-track">
+                            <div class="bar-fill" style="width: ${width}%; background-color: ${colors[i]}"></div>
+                        </div>
+                        <div class="bar-value">${val}</div>
+                    </div>
+                `;
+                i++;
+            }
+            container.innerHTML = html;
+        }
+
+        // --- Year Donut Chart ---
+        async function loadYearChart() {
+            const data = await api.getYearDistribution();
+            const canvas = document.getElementById('yearChart');
+            const ctx = canvas.getContext('2d');
+            
+            const total = Object.values(data).reduce((a, b) => a + b, 0);
+            document.getElementById('totalYearAthletes').innerText = total;
+
+            // Colors for years
+            const colors = {
+                "Freshman": "#3b82f6",
+                "Sophomore": "#22c55e",
+                "Junior": "#f97316",
+                "Senior": "#800020"
+            };
+
+            // Draw Donut
+            let startAngle = -Math.PI / 2;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 90;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let key in data) {
+                const val = data[key];
+                const sliceAngle = (val / total) * 2 * Math.PI;
+                const endAngle = startAngle + sliceAngle;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[key] || '#ccc';
+                ctx.fill();
+
+                startAngle = endAngle;
+            }
+
+            // Cut hole in center
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            // Render Legend
+            const legendContainer = document.getElementById('yearLegend');
+            let legendHtml = '';
+            for (let key in data) {
+                legendHtml += `
+                    <div class="legend-item">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full" style="background:${colors[key] || '#ccc'}"></span>
+                            <span class="text-sm text-gray-600">${key}</span>
+                        </div>
+                        <span class="font-bold text-sm">${data[key]}</span>
+                    </div>
+                `;
+            }
+            legendContainer.innerHTML = legendHtml;
+        }
+    </script>
+</body>
+</html>

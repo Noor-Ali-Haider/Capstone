@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athlete Profile - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+        .brand-area {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            text-decoration: none;
+        }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active {
+            background: rgba(0,0,0,0.15);
+            color: #fff;
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Sports Team Section in Sidebar */
+        .nav-section-title {
+            padding: 1.5rem 20px 0.5rem 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.5px;
+        }
+        .nav-item.sub-item {
+            padding: 10px 20px 10px 24px;
+            font-size: 0.9rem;
+        }
+
+        /* Top Header */
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Page Specific Styles */
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .btn-primary {
+            background: #800020;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        
+        .status-healthy { background: #e6f4ea; color: #1e8e3e; }
+        .status-recovering { background: #fff7e6; color: #f9ab00; }
+        .status-injured { background: #fce8e6; color: #c5221f; }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(128,0,32,0.1);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3000;
+            max-width: 400px;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.success { border-left: 4px solid #1e8e3e; }
+        .toast.info { border-left: 4px solid #1a73e8; }
+        .toast i { font-size: 1.2rem; }
+        .toast.success i { color: #1e8e3e; }
+        .toast.info i { color: #1a73e8; }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== SIDEBAR (IDENTICAL TO OTHER PAGES) ==================== -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item active">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="flex items-center gap-3">
+                <a href="athletes.html" class="text-gray-400 hover:text-gray-600">
+                    <i class="bi bi-arrow-left text-xl"></i>
+                </a>
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Athlete Profile</h2>
+                    <p class="text-xs text-gray-500">Detailed view of student-athlete</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50" onclick="openEditModal()">
+                    <i class="bi bi-pencil mr-1"></i> Edit
+                </button>
+                <button class="btn-primary text-sm" onclick="openMessageModal()">
+                    <i class="bi bi-chat-dots mr-1"></i> Message
+                </button>
+            </div>
+        </header>
+
+        <!-- Profile Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Profile Header Card -->
+            <div class="card p-6 mb-6">
+                <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+                    <!-- Avatar -->
+                    <div class="w-32 h-32 bg-[#800020] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg border-4 border-white" id="avatarInitials">
+                        SJ
+                    </div>
+                    
+                    <!-- Info -->
+                    <div class="flex-grow text-center md:text-left">
+                        <h1 class="text-3xl font-bold text-gray-900" id="profileName">Sarah Johnson</h1>
+                        <p class="text-lg text-gray-500 mt-1" id="profileDetails">Junior • Basketball</p>
+                        
+                        <div class="flex flex-wrap gap-6 mt-4 justify-center md:justify-start">
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase font-semibold">GPA</p>
+                                <p class="text-xl font-bold text-gray-800" id="profileGPA">3.70</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase font-semibold">Games Played</p>
+                                <p class="text-xl font-bold text-gray-800" id="profileGames">18</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-400 uppercase font-semibold">Status</p>
+                                <span class="inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold" id="profileStatus">Healthy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Academic Performance -->
+                <div class="card p-6 lg:col-span-2">
+                    <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="bi bi-book text-[#800020]"></i> Academic History
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                            <div>
+                                <p class="font-semibold text-sm">Fall 2023</p>
+                                <p class="text-xs text-gray-500">12 Credits</p>
+                            </div>
+                            <span class="font-bold text-lg text-[#800020]">3.80</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                            <div>
+                                <p class="font-semibold text-sm">Spring 2023</p>
+                                <p class="text-xs text-gray-500">15 Credits</p>
+                            </div>
+                            <span class="font-bold text-lg text-[#800020]">3.65</span>
+                        </div>
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                            <div>
+                                <p class="font-semibold text-sm">Fall 2022</p>
+                                <p class="text-xs text-gray-500">15 Credits</p>
+                            </div>
+                            <span class="font-bold text-lg text-[#800020]">3.70</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    
+                    <!-- Contact Card -->
+                    <div class="card p-6">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="bi bi-person-lines-fill text-[#800020]"></i> Contact Info
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center gap-3 text-gray-600 bg-gray-50 p-2 rounded">
+                                <i class="bi bi-envelope text-gray-400"></i>
+                                <span id="profileEmail">sarah.johnson@auk.edu.kw</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-gray-600 bg-gray-50 p-2 rounded">
+                                <i class="bi bi-telephone text-gray-400"></i>
+                                <span id="profilePhone">+965 1234-5678</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Card -->
+                    <div class="card p-6">
+                        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                            <i class="bi bi-activity text-[#800020]"></i> Recent Activity
+                        </h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 mt-2 rounded-full bg-green-500"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Attended Team Practice</p>
+                                    <p class="text-xs text-gray-400">Today, 4:00 PM</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 mt-2 rounded-full bg-blue-500"></div>
+                                <div>
+                                    <p class="text-sm font-medium">Submitted Wellness Check-in</p>
+                                    <p class="text-xs text-gray-400">Yesterday</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-2 h-2 mt-2 rounded-full bg-orange-500"></div>
+                                <div>
+                                    <p class="text-sm font-medium">New Achievement Unlocked</p>
+                                    <p class="text-xs text-gray-400">2 days ago</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== EDIT MODAL ==================== -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold text-gray-800">Edit Athlete Profile</h3>
+                <button onclick="closeEditModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="bi bi-x-lg text-xl"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-input" id="editName" value="Sarah Johnson">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Year</label>
+                        <select class="form-select" id="editYear">
+                            <option>Freshman</option>
+                            <option selected>Sophomore</option>
+                            <option>Junior</option>
+                            <option>Senior</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Team</label>
+                        <select class="form-select" id="editTeam">
+                            <option>Basketball</option>
+                            <option>Volleyball</option>
+                            <option>Futsal</option>
+                            <option>Football</option>
+                            <option>Padel</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">GPA</label>
+                        <input type="number" step="0.01" min="0" max="4" class="form-input" id="editGPA" value="3.70">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Games Played</label>
+                        <input type="number" class="form-input" id="editGames" value="18">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editStatus">
+                            <option selected>Healthy</option>
+                            <option>Recovering</option>
+                            <option>Injured</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="editEmail" value="sarah.johnson@auk.edu.kw">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" id="editPhone" value="+965 1234-5678">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveProfile()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MESSAGE MODAL ==================== -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold text-gray-800">Send Message</h3>
+                <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="bi bi-x-lg text-xl"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label class="form-label">To</label>
+                        <input type="text" class="form-input" id="messageTo" value="Sarah Johnson" readonly disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-input" id="messageSubject" placeholder="Enter subject...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-textarea" id="messageBody" rows="5" placeholder="Type your message here..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeMessageModal()">Cancel</button>
+                <button class="btn-primary" onclick="sendMessage()">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div class="toast" id="toast">
+        <i class="bi" id="toastIcon"></i>
+        <div>
+            <p class="font-medium" id="toastTitle"></p>
+            <p class="text-sm text-gray-500" id="toastMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        // Mock Data
+        const athletes = [
+            { 
+                id: 1, 
+                name: "Sarah Johnson", 
+                initials: "SJ", 
+                year: "Junior",
+                team: "Basketball",
+                gpa: "3.70",
+                games: "18",
+                status: "Healthy",
+                email: "sarah.johnson@auk.edu.kw",
+                phone: "+965 1234-5678"
+            },
+            { 
+                id: 2, 
+                name: "James Williams", 
+                initials: "JW", 
+                year: "Sophomore",
+                team: "Football",
+                gpa: "3.20",
+                games: "12",
+                status: "Recovering",
+                email: "james.williams@auk.edu.kw",
+                phone: "+965 2345-6789"
+            },
+            { 
+                id: 3, 
+                name: "David Martinez", 
+                initials: "DM", 
+                year: "Senior",
+                team: "Volleyball",
+                gpa: "3.90",
+                games: "22",
+                status: "Healthy",
+                email: "david.martinez@auk.edu.kw",
+                phone: "+965 3456-7890"
+            },
+            { 
+                id: 4, 
+                name: "Marcus Davis", 
+                initials: "MD", 
+                year: "Freshman",
+                team: "Basketball",
+                gpa: "3.50",
+                games: "8",
+                status: "Healthy",
+                email: "marcus.davis@auk.edu.kw",
+                phone: "+965 4567-8901"
+            },
+            { 
+                id: 5, 
+                name: "Lisa Thompson", 
+                initials: "LT", 
+                year: "Junior",
+                team: "Padel",
+                gpa: "3.80",
+                games: "15",
+                status: "Injured",
+                email: "lisa.thompson@auk.edu.kw",
+                phone: "+965 5678-9012"
+            }
+        ];
+
+        // Load profile based on URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        
+        let currentAthlete = athletes.find(a => a.id == id) || athletes[0];
+
+        // Update profile display
+        function updateProfileDisplay() {
+            document.getElementById('avatarInitials').innerText = currentAthlete.initials;
+            document.getElementById('profileName').innerText = currentAthlete.name;
+            document.getElementById('profileDetails').innerText = `${currentAthlete.year} • ${currentAthlete.team}`;
+            document.getElementById('profileGPA').innerText = currentAthlete.gpa;
+            document.getElementById('profileGames').innerText = currentAthlete.games;
+            
+            const statusSpan = document.getElementById('profileStatus');
+            statusSpan.innerText = currentAthlete.status;
+            statusSpan.className = `inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold status-${currentAthlete.status.toLowerCase()}`;
+            
+            document.getElementById('profileEmail').innerText = currentAthlete.email;
+            document.getElementById('profilePhone').innerText = currentAthlete.phone;
+        }
+
+        // Edit Modal Functions
+        function openEditModal() {
+            // Populate form with current values
+            document.getElementById('editName').value = currentAthlete.name;
+            document.getElementById('editYear').value = currentAthlete.year;
+            document.getElementById('editTeam').value = currentAthlete.team;
+            document.getElementById('editGPA').value = currentAthlete.gpa;
+            document.getElementById('editGames').value = currentAthlete.games;
+            document.getElementById('editStatus').value = currentAthlete.status;
+            document.getElementById('editEmail').value = currentAthlete.email;
+            document.getElementById('editPhone').value = currentAthlete.phone;
+            
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        function saveProfile() {
+            // Update currentAthlete with form values
+            currentAthlete.name = document.getElementById('editName').value;
+            currentAthlete.year = document.getElementById('editYear').value;
+            currentAthlete.team = document.getElementById('editTeam').value;
+            currentAthlete.gpa = document.getElementById('editGPA').value;
+            currentAthlete.games = document.getElementById('editGames').value;
+            currentAthlete.status = document.getElementById('editStatus').value;
+            currentAthlete.email = document.getElementById('editEmail').value;
+            currentAthlete.phone = document.getElementById('editPhone').value;
+            
+            // Update display
+            updateProfileDisplay();
+            
+            // Close modal
+            closeEditModal();
+            
+            // Show success toast
+            showToast('success', 'Profile Updated', 'Athlete information has been saved successfully.');
+        }
+
+        // Message Modal Functions
+        function openMessageModal() {
+            document.getElementById('messageTo').value = currentAthlete.name;
+            document.getElementById('messageSubject').value = '';
+            document.getElementById('messageBody').value = '';
+            document.getElementById('messageModal').classList.add('active');
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('active');
+        }
+
+        function sendMessage() {
+            const subject = document.getElementById('messageSubject').value;
+            const body = document.getElementById('messageBody').value;
+            
+            if (!subject || !body) {
+                showToast('info', 'Incomplete Message', 'Please fill in both subject and message fields.');
+                return;
+            }
+            
+            // Here you would typically send the message to a server
+            console.log('Sending message to:', currentAthlete.name);
+            console.log('Subject:', subject);
+            console.log('Message:', body);
+            
+            // Close modal
+            closeMessageModal();
+            
+            // Show success toast
+            showToast('success', 'Message Sent', `Your message to ${currentAthlete.name} has been sent.`);
+        }
+
+        // Toast Notification Function
+        function showToast(type, title, message) {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const titleEl = document.getElementById('toastTitle');
+            const messageEl = document.getElementById('toastMessage');
+            
+            // Set toast type
+            toast.className = `toast ${type}`;
+            
+            // Set icon based on type
+            if (type === 'success') {
+                icon.className = 'bi bi-check-circle-fill text-green-600';
+            } else {
+                icon.className = 'bi bi-info-circle-fill text-blue-600';
+            }
+            
+            // Set content
+            titleEl.innerText = title;
+            messageEl.innerText = message;
+            
+            // Show toast
+            toast.classList.add('show');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const editModal = document.getElementById('editModal');
+            const messageModal = document.getElementById('messageModal');
+            
+            if (event.target === editModal) {
+                closeEditModal();
+            }
+            if (event.target === messageModal) {
+                closeMessageModal();
+            }
+        }
+
+        // Initialize profile
+        updateProfileDisplay();
+    </script>
+</body>
+</html>

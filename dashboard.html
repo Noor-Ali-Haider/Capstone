@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUK Athletics Dashboard</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Sidebar Layout */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto; /* Allow scroll if menu is long */
+        }
+
+        /* Main Content Layout */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+
+        .brand-area {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            text-decoration: none;
+        }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active {
+            background: rgba(0,0,0,0.15);
+            color: #fff;
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Sports Team Section in Sidebar */
+        .nav-section-title {
+            padding: 1.5rem 20px 0.5rem 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.5px;
+        }
+        .nav-item.sub-item {
+            padding: 10px 20px 10px 24px; /* Slight indent */
+            font-size: 0.9rem;
+        }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* Notification Dropdown */
+        .notification-wrapper { position: relative; }
+        .notification-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .notification-btn:hover { background-color: #f3f4f6; }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 320px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 1px solid #eee;
+            z-index: 999;
+        }
+        .dropdown-menu.show { display: block; }
+        
+        .dropdown-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f9f9f9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:hover { background: #f9fafb; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item p { margin: 0; font-size: 13px; color: #444; }
+        .dropdown-item span { font-size: 11px; color: #999; }
+
+        /* Cards */
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
+        
+        .card-box {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #fafafa; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        tr:hover td { background-color: #fcfcfc; }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .tag-red { background: #fde8e8; color: #c81e1e; }
+        .tag-blue { background: #e8f0fe; color: #1a73e8; }
+        .tag-green { background: #e6f4ea; color: #1e8e3e; }
+        .tag-orange { background: #fef7e0; color: #f9ab00; }
+
+        .chart-area { padding: 1rem; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Interactive Chart Styles */
+        #myChart { cursor: pointer; }
+        
+        .legend-item {
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .legend-item:hover { background-color: #f3f4f6; }
+        .legend-item.active {
+            background-color: #e8f0fe;
+            border: 1px solid #d0e2ff;
+        }
+
+        .filter-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item active">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i> <!-- Using vinyl as circle substitute -->
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i> <!-- Alternative icon -->
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-circle-fill"></i>
+
+                <span>Padel</span>
+            </a>
+
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Student-Athlete Dashboard</h2>
+                <p class="text-sm text-gray-500">Monitor academic and athletic progress across all teams</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Search Input -->
+                <div class="relative hidden md:block">
+                    <input 
+                        type="text" 
+                        id="searchInput"
+                        placeholder="Search athletes..." 
+                        class="bg-gray-100 border-0 rounded-md py-2 pl-10 pr-4 text-sm w-56 focus:ring-2 focus:ring-[#800020]"
+                        onkeyup="searchTable()"
+                    >
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+                
+                <!-- Notification Bell -->
+                <div class="notification-wrapper">
+                    <button class="notification-btn" onclick="toggleNotifications()">
+                        <i class="bi bi-bell text-xl text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    
+                    <div id="notifDropdown" class="dropdown-menu">
+                        <div class="dropdown-header">Notifications</div>
+                        <div class="dropdown-item">
+                            <p><strong>Injury Report:</strong> Marcus Davis is cleared to play.</p>
+                            <span>2 hours ago</span>
+                        </div>
+                        <div class="dropdown-item">
+                            <p><strong>Academic Alert:</strong> James Williams GPA dropped.</p>
+                            <span>5 hours ago</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile -->
+                <div class="flex items-center gap-2 pl-3 border-l border-gray-200 ml-2">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-semibold">Admin User</p>
+                        <p class="text-xs text-gray-400">Director</p>
+                    </div>
+                    <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">
+                        AD
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="stat-card border-l-4 border-[#800020]">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Total Athletes</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-total">0</h3>
+                        </div>
+                        <div class="p-3 bg-red-50 text-[#800020] rounded-md">
+                            <i class="bi bi-people-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card border-l-4 border-green-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Average GPA</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-gpa">0.00</h3>
+                        </div>
+                        <div class="p-3 bg-green-50 text-green-600 rounded-md">
+                            <i class="bi bi-book-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Avg Performance</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-perf">0</h3>
+                        </div>
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-md">
+                            <i class="bi bi-trophy-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card border-l-4 border-orange-500">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs text-gray-500 font-medium uppercase">Healthy</p>
+                            <h3 class="text-2xl font-bold mt-1" id="val-health">0/0</h3>
+                        </div>
+                        <div class="p-3 bg-orange-50 text-orange-600 rounded-md">
+                            <i class="bi bi-heart-pulse-fill text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid: Table & Chart -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Table Section -->
+                <div class="lg:col-span-2 card-box">
+                    <div class="card-header">
+                        <div class="flex items-center gap-3">
+                            <h3 class="font-bold text-gray-800">Recent Athletes</h3>
+                            <div id="filterBadgeContainer"></div>
+                        </div>
+                        <button class="text-sm text-[#800020] font-semibold hover:underline">View All</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Sport</th>
+                                    <th>Year</th>
+                                    <th>GPA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                <!-- JS will insert rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Athletes by Sport Team</h3>
+                        <button id="clearFilterBtn" class="text-xs text-gray-500 hover:text-[#800020] hidden" onclick="clearFilters()">
+                            Clear Filter
+                        </button>
+                    </div>
+                    <div class="chart-area">
+                        <canvas id="myChart" width="220" height="220"></canvas>
+                        <div id="legend" class="w-full mt-4 space-y-1 px-2"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ==========================================
+        // MOCK DATABASE DATA
+        // ==========================================
+        const dbData = {
+            stats: { total: 6, gpa: 3.58, performance: 86, healthy: 4 },
+            athletes: [
+                { id: 1, name: "Sarah Johnson", sport: "Basketball", year: "Junior", gpa: 3.70 },
+                { id: 2, name: "James Williams", sport: "Soccer", year: "Freshman", gpa: 3.20 },
+                { id: 3, name: "Marcus Davis", sport: "Football", year: "Senior", gpa: 3.45 },
+                { id: 4, name: "Lisa Thompson", sport: "Tennis", year: "Junior", gpa: 3.60 },
+                { id: 5, name: "Robert Garcia", sport: "Volleyball", year: "Freshman", gpa: 3.68 }
+            ],
+            chartData: [
+                { name: "Basketball", val: 1, color: "#f97316" },
+                { name: "Soccer", val: 1, color: "#22c55e" },
+                { name: "Football", val: 1, color: "#3b82f6" },
+                { name: "Tennis", val: 1, color: "#ec4899" },
+                { name: "Volleyball", val: 1, color: "#8b5cf6" }
+            ]
+        };
+
+        // State variables
+        let currentSportFilter = null;
+        let chartSegments = []; 
+
+        window.onload = function() {
+            updateStats();
+            renderTable(dbData.athletes); 
+            renderChart();
+        };
+
+        function updateStats() {
+            document.getElementById('val-total').innerText = dbData.stats.total;
+            document.getElementById('val-gpa').innerText = dbData.stats.gpa.toFixed(2);
+            document.getElementById('val-perf').innerText = dbData.stats.performance + '%';
+            document.getElementById('val-health').innerText = dbData.stats.healthy + '/' + dbData.stats.total;
+        }
+
+        function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filterText = input.value.toLowerCase();
+            
+            let filteredData = dbData.athletes.filter(athlete => {
+                const matchesText = athlete.name.toLowerCase().includes(filterText) || 
+                       athlete.sport.toLowerCase().includes(filterText);
+                
+                const matchesSport = !currentSportFilter || athlete.sport === currentSportFilter;
+
+                return matchesText && matchesSport;
+            });
+
+            renderTable(filteredData);
+        }
+
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notifDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.matches('.notification-btn') && !event.target.closest('.notification-btn')) {
+                const dropdown = document.getElementById('notifDropdown');
+                if (dropdown.classList.contains('show')) dropdown.classList.remove('show');
+            }
+        }
+
+        function filterBySport(sportName) {
+            currentSportFilter = sportName;
+            
+            const badgeContainer = document.getElementById('filterBadgeContainer');
+            const clearBtn = document.getElementById('clearFilterBtn');
+            
+            if (sportName) {
+                badgeContainer.innerHTML = `<span class="filter-badge">${sportName} <i class="bi bi-x-circle" style="cursor:pointer" onclick="clearFilters()"></i></span>`;
+                clearBtn.classList.remove('hidden');
+            } else {
+                badgeContainer.innerHTML = '';
+                clearBtn.classList.add('hidden');
+            }
+
+            document.querySelectorAll('.legend-item').forEach(item => {
+                if(item.dataset.sport === sportName) item.classList.add('active');
+                else item.classList.remove('active');
+            });
+
+            searchTable();
+        }
+
+        function clearFilters() {
+            currentSportFilter = null;
+            document.getElementById('searchInput').value = ''; 
+            filterBySport(null);
+            renderTable(dbData.athletes);
+        }
+
+        // ==========================================
+        // RENDERING LOGIC
+        // ==========================================
+        
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            let html = '';
+
+            if (data.length === 0) {
+                html = `<tr><td colspan="4" class="text-center py-8 text-gray-400">No athletes found</td></tr>`;
+            } else {
+                data.forEach(row => {
+                    let tagClass = 'tag-blue';
+                    if(row.sport === 'Basketball') tagClass = 'tag-orange';
+                    if(row.sport === 'Soccer') tagClass = 'tag-green';
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                                        ${row.name.split(' ').map(n => n[0]).join('')}
+                                    </div>
+                                    <!-- CLICKABLE NAME -->
+                                    <a href="profile.html?id=${row.id}" class="font-medium text-gray-800 hover:text-[#800020] hover:underline">
+                                        ${row.name}
+                                    </a>
+                                </div>
+                            </td>
+                            <td><span class="tag ${tagClass}">${row.sport}</span></td>
+                            <td class="text-gray-500">${row.year}</td>
+                            <td class="font-semibold">${row.gpa.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        }
+
+        function renderChart() {
+            const canvas = document.getElementById('myChart');
+            const ctx = canvas.getContext('2d');
+            const data = dbData.chartData;
+            const total = data.reduce((sum, d) => sum + d.val, 0);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.max(1, Math.min(centerX, centerY) - 10);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            chartSegments = []; 
+
+            let startAngle = -Math.PI / 2; 
+
+            data.forEach(segment => {
+                const sliceAngle = (segment.val / total) * 2 * Math.PI;
+                const endAngle = startAngle + sliceAngle;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = segment.color;
+                ctx.fill();
+
+                chartSegments.push({
+                    name: segment.name,
+                    startAngle: startAngle,
+                    endAngle: endAngle
+                });
+
+                startAngle = endAngle;
+            });
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius * 0.6, 0, 2 * Math.PI);
+            ctx.fillStyle = '#ffffff';
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 24px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText(total.toString(), centerX, centerY - 5);
+            ctx.fillStyle = '#999';
+            ctx.font = '12px Inter';
+            ctx.fillText('Total', centerX, centerY + 12);
+
+            const legendDiv = document.getElementById('legend');
+            legendDiv.innerHTML = data.map(d => `
+                <div class="legend-item ${currentSportFilter === d.name ? 'active' : ''}" data-sport="${d.name}" onclick="filterBySport('${d.name}')">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full" style="background:${d.color}"></span>
+                        <span class="text-gray-600 text-sm">${d.name}</span>
+                    </div>
+                    <span class="font-bold text-gray-800 text-sm">${Math.round((d.val/total)*100)}%</span>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('myChart').addEventListener('click', function(event) {
+            const rect = this.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            const centerX = this.width / 2;
+            const centerY = this.height / 2;
+            const radius = Math.min(centerX, centerY) - 10;
+
+            const dx = x - centerX;
+            const dy = y - centerY;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+
+            if (distance < radius && distance > radius * 0.6) {
+                let angle = Math.atan2(dy, dx);
+                
+                for (let seg of chartSegments) {
+                    let checkAngle = angle; 
+                    if (checkAngle >= seg.startAngle && checkAngle < seg.endAngle) {
+                         filterBySport(seg.name);
+                         return;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

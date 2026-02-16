@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training & Sessions - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;       /* Burgundy */
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* --- Layout --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        /* --- Components --- */
+        .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; text-decoration: none; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
+
+        /* Sports Team Section */
+        .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+        .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* --- Page Specific --- */
+        .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #fafafa; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        tr:hover td { background-color: #fcfcfc; }
+
+        .tag { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag-practice { background: #e8f0fe; color: #1a73e8; }
+        .tag-game { background: #fce8e6; color: #c5221f; }
+        .tag-event { background: #fef7e0; color: #f9ab00; }
+        
+        .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-upcoming { background: #e6f4ea; color: #1e8e3e; }
+        .status-completed { background: #f1f3f4; color: #5f6368; }
+        .status-cancelled { background: #fce8e6; color: #c5221f; }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay.show { display: flex; }
+        .modal-content { background: white; width: 100%; max-width: 500px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 0.5rem; }
+        
+        .form-control { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 6px; padding: 8px 12px; font-size: 14px; width: 100%; }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR (Identical to Dashboard/Athletes) -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+
+            <a href="training.html" class="nav-item active">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <!-- SPORTS TEAMS SECTION -->
+            <div class="nav-section-title">Sports Teams</div>
+            
+            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="athletes.html?sport=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Training & Sessions</h2>
+                <p class="text-sm text-gray-500">Track practices, games, and team activities</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Action Bar -->
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex gap-4">
+                    <select id="filterSport" class="form-control w-48" onchange="loadData()">
+                        <option value="">All Sports</option>
+                        <option value="Basketball">Basketball</option>
+                        <option value="Football">Football</option>
+                        <option value="Volleyball">Volleyball</option>
+                        <option value="Padel">Padel</option>
+                    </select>
+                    <select id="filterStatus" class="form-control w-48" onchange="loadData()">
+                        <option value="">All Status</option>
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                </div>
+
+                <button class="bg-[#800020] text-white px-4 py-2 rounded-md font-semibold flex items-center gap-2 hover:opacity-90 transition" onclick="openModal()">
+                    <i class="bi bi-plus-lg"></i>
+                    Add Session
+                </button>
+            </div>
+
+            <!-- Table Section -->
+            <div class="card-box">
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Session Name</th>
+                                <th>Sport</th>
+                                <th>Date & Time</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessionsTable">
+                            <!-- Rendered via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ADD SESSION MODAL -->
+    <div id="addSessionModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold text-lg">Schedule New Session</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700"><i class="bi bi-x-lg text-xl"></i></button>
+            </div>
+            <div class="modal-body space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Session Name</label>
+                    <input type="text" id="sessionName" class="form-control" placeholder="e.g. Morning Practice">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sport</label>
+                        <select id="sessionSport" class="form-control">
+                            <option>Basketball</option>
+                            <option>Volleyball</option>
+                            <option>Football</option>
+                            <option>Futsal</option>
+                            <option>Padel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Type</label>
+                        <select id="sessionType" class="form-control">
+                            <option>Practice</option>
+                            <option>Game</option>
+                            <option>Event</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Date</label>
+                        <input type="date" id="sessionDate" class="form-control">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Time</label>
+                        <input type="time" id="sessionTime" class="form-control">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Location</label>
+                    <input type="text" id="sessionLocation" class="form-control" placeholder="e.g. Main Gym">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50">Cancel</button>
+                <button onclick="saveSession()" class="px-4 py-2 bg-[#800020] text-white rounded-md hover:opacity-90">Save Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ==========================================
+        // 1. MOCK DATABASE (Replace this with Database Connection later)
+        // ==========================================
+        const mockDB = {
+            sessions: [
+                { id: 1, name: "Pre-Season Training", sport: "Basketball", date: "2026-10-05", time: "16:00", location: "Main Gym", type: "Practice", status: "Upcoming" },
+                { id: 2, name: "vs. KU Team", sport: "Football", date: "2026-10-02", time: "18:00", location: "Stadium Field", type: "Game", status: "Completed" },
+                { id: 3, name: "Volleyball Open Gym", sport: "Volleyball", date: "2026-10-07", time: "10:00", location: "Auxiliary Gym", type: "Event", status: "Upcoming" },
+                { id: 4, name: "Padel Tournament Prep", sport: "Padel", date: "2026-10-01", time: "09:00", location: "Padel Courts", type: "Practice", status: "Completed" }
+            ]
+        };
+
+        // ==========================================
+        // 2. API SERVICE LAYER (Connects Frontend to Backend)
+        // ==========================================
+        
+        const api = {
+            // GET: Fetch sessions with optional filters
+            getSessions: async (sportFilter, statusFilter) => {
+                // TODO: Replace with real API Call
+                // Example: return await fetch('/api/sessions?sport=' + sportFilter).then(res => res.json());
+                
+                console.log("API CALL: Fetching sessions...");
+                
+                // Simulating Server-side filtering
+                return mockDB.sessions.filter(s => {
+                    const matchSport = !sportFilter || s.sport === sportFilter;
+                    const matchStatus = !statusFilter || s.status === statusFilter;
+                    return matchSport && matchStatus;
+                });
+            },
+
+            // POST: Add a new session
+            addSession: async (sessionData) => {
+                // TODO: Replace with real API Call
+                // Example: return await fetch('/api/sessions', { method: 'POST', body: JSON.stringify(sessionData) });
+                
+                console.log("API CALL: Saving session...", sessionData);
+                
+                // Simulate Auto-increment ID
+                const newId = mockDB.sessions.length + 1;
+                const newSession = { id: newId, ...sessionData, status: "Upcoming" };
+                
+                mockDB.sessions.push(newSession);
+                return { success: true, data: newSession };
+            }
+        };
+
+        // ==========================================
+        // 3. UI LOGIC (Handles HTML interaction)
+        // ==========================================
+
+        window.onload = function() {
+            loadData();
+        };
+
+        async function loadData() {
+            const sportVal = document.getElementById('filterSport').value;
+            const statusVal = document.getElementById('filterStatus').value;
+
+            // Call API
+            const data = await api.getSessions(sportVal, statusVal);
+            
+            // Render
+            renderTable(data);
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('sessionsTable');
+            tbody.innerHTML = '';
+
+            if(data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No sessions found.</td></tr>`;
+                return;
+            }
+
+            data.forEach(session => {
+                // Type Tag Logic
+                let typeClass = 'tag-practice';
+                if(session.type === 'Game') typeClass = 'tag-game';
+                if(session.type === 'Event') typeClass = 'tag-event';
+
+                // Status Badge Logic
+                let statusClass = 'status-upcoming';
+                if(session.status === 'Completed') statusClass = 'status-completed';
+                if(session.status === 'Cancelled') statusClass = 'status-cancelled';
+
+                const row = `
+                    <tr>
+                        <td class="font-medium">${session.name}</td>
+                        <td>${session.sport}</td>
+                        <td>${session.date} <span class="text-gray-400 text-xs">${session.time}</span></td>
+                        <td>${session.location}</td>
+                        <td><span class="tag ${typeClass}">${session.type}</span></td>
+                        <td><span class="status-badge ${statusClass}">${session.status}</span></td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function openModal() {
+            document.getElementById('addSessionModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('addSessionModal').classList.remove('show');
+        }
+
+        async function saveSession() {
+            // 1. Gather Data from Form
+            const sessionData = {
+                name: document.getElementById('sessionName').value,
+                sport: document.getElementById('sessionSport').value,
+                date: document.getElementById('sessionDate').value,
+                time: document.getElementById('sessionTime').value,
+                location: document.getElementById('sessionLocation').value,
+                type: document.getElementById('sessionType').value
+            };
+
+            // 2. Validation (Basic)
+            if(!sessionData.name || !sessionData.date) {
+                alert("Please fill in required fields.");
+                return;
+            }
+
+            // 3. Call API
+            const result = await api.addSession(sessionData);
+
+            if(result.success) {
+                closeModal();
+                loadData(); // Refresh table
+            }
+        }
+    </script>
+</body>
+</html>
