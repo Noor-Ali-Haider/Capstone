@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracking - AUK Athletics</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item { display: flex; align-items: center; padding: 12px 20px; color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.2s; border-left: 4px solid transparent; text-decoration: none; }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
+
+        .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
+        .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; }
+        .card-header { padding: 1rem 1.5rem; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; background: #fafafa; }
+        
+        .attendance-btn {
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0 2px;
+            transition: all 0.2s;
+        }
+        .attendance-btn.present.active { background: #10b981; color: white; border-color: #10b981; }
+        .attendance-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
+        .attendance-btn.late.active { background: #f59e0b; color: white; border-color: #f59e0b; }
+        .attendance-btn.excused.active { background: #6b7280; color: white; border-color: #6b7280; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #fff; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f5f5f5; font-size: 14px; vertical-align: middle; }
+        tr:hover td { background-color: #fcfcfc; }
+        
+        .form-control { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 6px; padding: 8px 12px; font-size: 14px; }
+        .form-control:focus { outline: none; border-color: var(--primary); background: white; }
+
+        .view-btn {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+        }
+        .view-btn:hover { opacity: 0.9; }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-present { background: #d1fae5; color: #065f46; }
+        .status-absent { background: #fee2e2; color: #991b1b; }
+        .status-late { background: #fed7aa; color: #92400e; }
+        .status-excused { background: #e5e7eb; color: #374151; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+            <a href="attendance.html" class="nav-item active">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-trophy-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <div class="nav-section-title">Sports Teams</div>
+            <a href="attendance.html?team=Basketball" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="attendance.html?team=Volleyball" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="attendance.html?team=Futsal" class="nav-item sub-item">
+                <i class="bi bi-futbol"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="attendance.html?team=Football" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="attendance.html?team=Padel" class="nav-item sub-item">
+                <i class="bi bi-tennis"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <div class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Top Header -->
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Attendance Tracking</h2>
+                <p class="text-sm text-gray-500" id="selected-team-display">Football Team - Morning Training</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-6 lg:p-8">
+            
+            <!-- Training Session Info -->
+            <div class="bg-white p-4 rounded-lg shadow-sm mb-6 flex flex-wrap gap-4 items-center">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Date:</label>
+                        <input type="date" id="attendance-date" class="form-control ml-2" onchange="loadAttendanceTable()">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Team:</label>
+                        <select id="filter-team" class="form-control ml-2" onchange="filterByTeam()">
+                            <option value="All">All Teams</option>
+                            <option value="Basketball">Basketball</option>
+                            <option value="Football">Football</option>
+                            <option value="Volleyball">Volleyball</option>
+                            <option value="Futsal">Futsal</option>
+                            <option value="Padel">Padel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-600">Session:</label>
+                        <select id="filter-session" class="form-control ml-2" onchange="loadAttendanceTable()">
+                            <option value="Morning Training">Morning Training</option>
+                            <option value="Afternoon Training">Afternoon Training</option>
+                            <option value="Evening Training">Evening Training</option>
+                            <option value="Game">Game</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="stat-card border-l-4 border-green-500">
+                    <p class="text-sm text-gray-500">Present</p>
+                    <p class="text-3xl font-bold" id="stats-present">0</p>
+                </div>
+                <div class="stat-card border-l-4 border-red-500">
+                    <p class="text-sm text-gray-500">Absent</p>
+                    <p class="text-3xl font-bold" id="stats-absent">0</p>
+                </div>
+                <div class="stat-card border-l-4 border-yellow-500">
+                    <p class="text-sm text-gray-500">Late/Excused</p>
+                    <p class="text-3xl font-bold" id="stats-other">0</p>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="card-box">
+                <div class="card-header">
+                    <div>
+                        <h3 class="font-bold text-gray-800" id="session-title">Morning Training - Football Team</h3>
+                        <p class="text-xs text-gray-400 mt-1">Click on P/A/L/E buttons to mark attendance for each student</p>
+                    </div>
+                    <button class="bg-green-600 text-white px-4 py-2 text-sm rounded-md font-semibold hover:opacity-90 transition" onclick="saveAttendance()">
+                        <i class="bi bi-check-lg mr-1"></i>
+                        Save Attendance
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Athlete</th>
+                                <th>Team</th>
+                                <th>Year</th>
+                                <th>Status (P/A/L/E)</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-table">
+                            <!-- JS will inject rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Saved Attendance Records -->
+            <div class="card-box mt-6">
+                <div class="card-header">
+                    <h3 class="font-bold text-gray-800">Saved Training Sessions</h3>
+                    <span class="text-xs text-gray-400">Click View to see attendance list</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Session</th>
+                                <th>Team</th>
+                                <th>Present</th>
+                                <th>Absent</th>
+                                <th>Late</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="saved-records-table">
+                            <!-- JS will inject rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VIEW ATTENDANCE MODAL -->
+    <div id="viewModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+            <div class="p-4 border-b flex justify-between items-center">
+                <h3 class="font-bold text-lg" id="modal-title">Attendance Details</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="bi bi-x-lg text-xl"></i>
+                </button>
+            </div>
+            <div class="p-4" id="modal-content">
+                <!-- Modal content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ==========================================
+        // DATABASE
+        // ==========================================
+        let db = {
+            athletes: [
+                { id: 1, name: "Sarah Johnson", team: "Basketball", year: "Junior" },
+                { id: 2, name: "James Williams", team: "Football", year: "Freshman" },
+                { id: 3, name: "David Martinez", team: "Football", year: "Sophomore" },
+                { id: 4, name: "Marcus Davis", team: "Football", year: "Senior" },
+                { id: 5, name: "Lisa Thompson", team: "Padel", year: "Junior" },
+                { id: 6, name: "Mia Anderson", team: "Volleyball", year: "Freshman" },
+                { id: 7, name: "John Smith", team: "Football", year: "Junior" },
+                { id: 8, name: "Mike Johnson", team: "Football", year: "Sophomore" },
+                { id: 9, name: "Alex Brown", team: "Basketball", year: "Senior" },
+                { id: 10, name: "Emma Wilson", team: "Volleyball", year: "Sophomore" }
+            ],
+            attendance: [
+                // Sample saved records
+                { 
+                    id: 1, 
+                    date: "2026-10-05", 
+                    session: "Morning Training", 
+                    team: "Football",
+                    records: [
+                        { athleteId: 2, status: "Present", notes: "" },
+                        { athleteId: 3, status: "Present", notes: "" },
+                        { athleteId: 4, status: "Absent", notes: "Injured - ankle sprain" },
+                        { athleteId: 7, status: "Present", notes: "" },
+                        { athleteId: 8, status: "Late", notes: "Arrived 15 mins late" }
+                    ]
+                },
+                { 
+                    id: 2, 
+                    date: "2026-10-04", 
+                    session: "Afternoon Training", 
+                    team: "Football",
+                    records: [
+                        { athleteId: 2, status: "Present", notes: "" },
+                        { athleteId: 3, status: "Present", notes: "" },
+                        { athleteId: 4, status: "Absent", notes: "Still injured" },
+                        { athleteId: 7, status: "Present", notes: "" },
+                        { athleteId: 8, status: "Present", notes: "" }
+                    ]
+                }
+            ]
+        };
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const saved = localStorage.getItem('attendanceDB');
+            if (saved) {
+                try {
+                    db = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Error loading data");
+                }
+            }
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('attendanceDB', JSON.stringify(db));
+        }
+
+        // ==========================================
+        // UI STATE
+        // ==========================================
+        let currentRecords = [];
+        let selectedTeam = 'Football'; // Default to Football
+
+        window.onload = function() {
+            loadFromStorage();
+            
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendance-date').value = today;
+            
+            // Check URL for team parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const teamParam = urlParams.get('team');
+            if (teamParam) {
+                document.getElementById('filter-team').value = teamParam;
+                selectedTeam = teamParam;
+            }
+            
+            loadAttendanceTable();
+            loadSavedRecords();
+        };
+
+        // Filter by team (called from sidebar)
+        function filterByTeam() {
+            selectedTeam = document.getElementById('filter-team').value;
+            document.getElementById('selected-team-display').innerText = 
+                selectedTeam === 'All' ? 'All Teams' : selectedTeam + ' Team';
+            loadAttendanceTable();
+        }
+
+        // Load athletes for attendance marking
+        function loadAttendanceTable() {
+            const team = document.getElementById('filter-team').value;
+            const session = document.getElementById('filter-session').value;
+            const date = document.getElementById('attendance-date').value;
+            
+            // Update title
+            document.getElementById('session-title').innerHTML = 
+                `${session} - ${team === 'All' ? 'All Teams' : team + ' Team'}`;
+            document.getElementById('selected-team-display').innerText = 
+                team === 'All' ? 'All Teams' : team + ' Team - ' + session;
+            
+            // Filter athletes by team
+            let athletes = db.athletes;
+            if (team !== 'All') {
+                athletes = athletes.filter(a => a.team === team);
+            }
+            
+            // Check if we have saved records for this date/session/team
+            const savedSession = db.attendance.find(a => 
+                a.date === date && 
+                a.session === session && 
+                a.team === team
+            );
+            
+            // Create records for each athlete
+            currentRecords = athletes.map(athlete => {
+                const saved = savedSession?.records.find(r => r.athleteId === athlete.id);
+                return {
+                    athleteId: athlete.id,
+                    athlete: athlete,
+                    status: saved ? saved.status : 'Present', // Default to Present
+                    notes: saved ? saved.notes : ''
+                };
+            });
+            
+            renderAttendanceTable();
+            updateStats();
+        }
+
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendance-table');
+            
+            if(currentRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">No athletes found for this team</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = currentRecords.map(record => {
+                return `
+                    <tr>
+                        <td>
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
+                                    ${record.athlete.name.split(' ').map(n => n[0]).join('')}
+                                </div>
+                                <span class="font-medium">${record.athlete.name}</span>
+                            </div>
+                        </td>
+                        <td>${record.athlete.team}</td>
+                        <td>${record.athlete.year}</td>
+                        <td>
+                            <div class="flex gap-1">
+                                <button class="attendance-btn present ${record.status === 'Present' ? 'active' : ''}" 
+                                    onclick="updateStatus(${record.athleteId}, 'Present')">P</button>
+                                <button class="attendance-btn absent ${record.status === 'Absent' ? 'active' : ''}" 
+                                    onclick="updateStatus(${record.athleteId}, 'Absent')">A</button>
+                                <button class="attendance-btn late ${record.status === 'Late' ? 'active' : ''}" 
+                                    onclick="updateStatus(${record.athleteId}, 'Late')">L</button>
+                                <button class="attendance-btn excused ${record.status === 'Excused' ? 'active' : ''}" 
+                                    onclick="updateStatus(${record.athleteId}, 'Excused')">E</button>
+                            </div>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control text-sm py-1 w-full" 
+                                placeholder="Add notes..." 
+                                value="${record.notes}" 
+                                onchange="updateNotes(${record.athleteId}, this.value)">
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            const present = currentRecords.filter(r => r.status === 'Present').length;
+            const absent = currentRecords.filter(r => r.status === 'Absent').length;
+            const late = currentRecords.filter(r => r.status === 'Late').length;
+            const excused = currentRecords.filter(r => r.status === 'Excused').length;
+            
+            document.getElementById('stats-present').innerText = present;
+            document.getElementById('stats-absent').innerText = absent;
+            document.getElementById('stats-other').innerText = late + excused;
+        }
+
+        function updateStatus(athleteId, status) {
+            const record = currentRecords.find(r => r.athleteId === athleteId);
+            if (record) {
+                record.status = status;
+                renderAttendanceTable();
+                updateStats();
+            }
+        }
+
+        function updateNotes(athleteId, notes) {
+            const record = currentRecords.find(r => r.athleteId === athleteId);
+            if (record) {
+                record.notes = notes;
+            }
+        }
+
+        function saveAttendance() {
+            const date = document.getElementById('attendance-date').value;
+            const session = document.getElementById('filter-session').value;
+            const team = document.getElementById('filter-team').value;
+            
+            // Check if session already exists
+            const existingIndex = db.attendance.findIndex(a => 
+                a.date === date && a.session === session && a.team === team
+            );
+            
+            const newRecord = {
+                id: existingIndex !== -1 ? db.attendance[existingIndex].id : db.attendance.length + 1,
+                date: date,
+                session: session,
+                team: team,
+                records: currentRecords.map(r => ({
+                    athleteId: r.athleteId,
+                    status: r.status,
+                    notes: r.notes
+                }))
+            };
+            
+            if (existingIndex !== -1) {
+                // Update existing record
+                db.attendance[existingIndex] = newRecord;
+            } else {
+                // Add new record
+                db.attendance.push(newRecord);
+            }
+            
+            saveToStorage();
+            loadSavedRecords();
+            
+            // Show success message
+            alert(`Attendance saved for ${team === 'All' ? 'All Teams' : team} - ${session} on ${date}`);
+        }
+
+        function loadSavedRecords() {
+            const tbody = document.getElementById('saved-records-table');
+            
+            // Sort by date (most recent first)
+            const sorted = [...db.attendance].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if(sorted.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-400">No saved attendance records</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = sorted.map(record => {
+                const present = record.records.filter(r => r.status === 'Present').length;
+                const absent = record.records.filter(r => r.status === 'Absent').length;
+                const late = record.records.filter(r => r.status === 'Late').length;
+                
+                return `
+                    <tr>
+                        <td>${record.date}</td>
+                        <td>${record.session}</td>
+                        <td>${record.team}</td>
+                        <td><span class="status-badge status-present">${present}</span></td>
+                        <td><span class="status-badge status-absent">${absent}</span></td>
+                        <td><span class="status-badge status-late">${late}</span></td>
+                        <td>
+                            <button class="view-btn" onclick="viewAttendance(${record.id})">
+                                <i class="bi bi-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function viewAttendance(recordId) {
+            const record = db.attendance.find(r => r.id === recordId);
+            if (!record) return;
+            
+            const modal = document.getElementById('viewModal');
+            const modalContent = document.getElementById('modal-content');
+            const modalTitle = document.getElementById('modal-title');
+            
+            modalTitle.innerText = `${record.team} - ${record.session} (${record.date})`;
+            
+            // Get athlete details for each record
+            const details = record.records.map(r => {
+                const athlete = db.athletes.find(a => a.id === r.athleteId);
+                let statusClass = 'status-present';
+                if(r.status === 'Absent') statusClass = 'status-absent';
+                if(r.status === 'Late') statusClass = 'status-late';
+                if(r.status === 'Excused') statusClass = 'status-excused';
+                
+                return `
+                    <tr>
+                        <td>${athlete ? athlete.name : 'Unknown'}</td>
+                        <td>${athlete ? athlete.year : ''}</td>
+                        <td><span class="status-badge ${statusClass}">${r.status}</span></td>
+                        <td>${r.notes || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            modalContent.innerHTML = `
+                <table class="w-full">
+                    <thead>
+                        <tr>
+                            <th>Athlete</th>
+                            <th>Year</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${details}
+                    </tbody>
+                </table>
+            `;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('viewModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Click outside modal to close
+        window.onclick = function(event) {
+            const modal = document.getElementById('viewModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
