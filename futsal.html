@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futsal Team - AUK Athletics</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5c0017;
+            --accent: #bfa15e;
+            --bg-main: #f4f6f9;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--primary);
+            color: white;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--bg-main);
+        }
+
+        .brand-area {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu { flex-grow: 1; padding: 1rem 0; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: rgba(255,255,255,0.8);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid transparent;
+            text-decoration: none;
+        }
+        .nav-item i { margin-right: 12px; font-size: 1.1rem; }
+        .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
+        .nav-item.active {
+            background: rgba(0,0,0,0.15);
+            color: #fff;
+            border-left-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-section-title {
+            padding: 1.5rem 20px 0.5rem 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.5px;
+        }
+        .nav-item.sub-item {
+            padding: 10px 20px 10px 24px;
+            font-size: 0.9rem;
+        }
+
+        .top-header {
+            background: white;
+            height: 70px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.06); }
+        
+        .card-box {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+            overflow: hidden;
+        }
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px 16px; background: #fafafa; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        td { padding: 14px 16px; border-bottom: 1px solid #f5f5f5; font-size: 14px; }
+        tr:hover td { background-color: #fcfcfc; }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .tag-green { background: #e6f4ea; color: #1e8e3e; }
+        .tag-red { background: #fde8e8; color: #c81e1e; }
+        .tag-orange { background: #fef7e0; color: #f9ab00; }
+        .tag-cyan { background: #e0f7fa; color: #00838f; }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn-primary:hover { opacity: 0.9; }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover { background: #e5e7eb; }
+
+        .schedule-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+        .schedule-item:hover { background: #fafafa; }
+        .schedule-date {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        .notification-wrapper { position: relative; }
+        .notification-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        .notification-btn:hover { background-color: #f3f4f6; }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 45px;
+            right: 0;
+            width: 320px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border: 1px solid #eee;
+            z-index: 999;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .dropdown-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f9f9f9;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .dropdown-item:hover { background: #f9fafb; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            padding: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.success { border-left: 4px solid #1e8e3e; }
+        .toast.info { border-left: 4px solid #1a73e8; }
+        .toast.error { border-left: 4px solid #c81e1e; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand-area">
+            <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
+            <div>
+                <h1 class="text-lg font-bold">AUK Athletics</h1>
+                <p class="text-xs opacity-60">Student Life Department</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item">
+                <i class="bi bi-grid-1x2-fill"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="athletes.html" class="nav-item">
+                <i class="bi bi-people-fill"></i>
+                <span>Athletes</span>
+            </a>
+            <a href="attendance.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="training.html" class="nav-item">
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Training & Sessions</span>
+            </a>
+            <a href="health.html" class="nav-item">
+                <i class="bi bi-heart-pulse-fill"></i>
+                <span>Health & Wellness</span>
+            </a>
+            <a href="checkin.html" class="nav-item">
+                <i class="bi bi-clipboard2-pulse-fill"></i>
+                <span>Wellness Check-In</span>
+            </a>
+            <a href="analytics.html" class="nav-item">
+                <i class="bi bi-bar-chart-fill"></i>
+                <span>Analytics</span>
+            </a>
+            <a href="announcements.html" class="nav-item">
+                <i class="bi bi-megaphone-fill"></i>
+                <span>Announcements</span>
+            </a>
+
+            <div class="nav-section-title">Sports Teams</div>
+            <a href="basketball.html" class="nav-item sub-item">
+                <i class="bi bi-dribbble"></i>
+                <span>Basketball</span>
+            </a>
+            <a href="volleyball.html" class="nav-item sub-item">
+                <i class="bi bi-vinyl"></i>
+                <span>Volleyball</span>
+            </a>
+            <a href="futsal.html" class="nav-item sub-item active">
+                <i class="bi bi-dribbble"></i>
+                <span>Futsal</span>
+            </a>
+            <a href="football.html" class="nav-item sub-item">
+                <i class="bi bi-life-preserver"></i>
+                <span>Football</span>
+            </a>
+            <a href="padel.html" class="nav-item sub-item">
+                <i class="bi bi-circle-fill"></i>
+                <span>Padel</span>
+            </a>
+        </nav>
+
+        <div class="border-t border-white/10 p-3 mt-auto">
+            <a href="settings.html" class="nav-item">
+                <i class="bi bi-gear-fill"></i>
+                <span>Settings</span>
+            </a>
+            <div class="nav-item" onclick="logout()">
+                <i class="bi bi-box-arrow-left"></i>
+                <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <header class="top-header">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">Futsal Team</h2>
+                <p id="teamSubtitle" class="text-sm text-gray-500">Men's Varsity • Team roster, performance metrics, and schedule</p>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <div class="relative hidden md:block">
+                    <input type="text" id="searchInput" placeholder="Search players..." 
+                        class="bg-gray-100 border-0 rounded-md py-2 pl-10 pr-4 text-sm w-56 focus:ring-2 focus:ring-[#800020]"
+                        onkeyup="searchTable()">
+                    <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                </div>
+                
+                <div class="notification-wrapper">
+                    <button class="notification-btn" onclick="toggleNotifications()">
+                        <i class="bi bi-bell text-xl text-gray-500"></i>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <div id="notifDropdown" class="dropdown-menu">
+                        <div class="dropdown-header">Notifications</div>
+                        <div id="notificationList">
+                            <div class="dropdown-item"><p><strong>Tournament:</strong> Futsal Championship next week</p><span>2 hours ago</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 pl-3 border-l border-gray-200 ml-2">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                        <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
+                    </div>
+                    <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 lg:p-8">
+            
+            <!-- GENDER TOGGLE BUTTONS -->
+            <div class="flex gap-3 mb-6">
+                <button id="mensBtn" class="gender-btn-active px-6 py-2 rounded-lg font-semibold cursor-pointer transition-all" style="background: #800020; color: white; border: none;">
+                    <i class="bi bi-gender-male mr-2"></i> Men's Team
+                </button>
+                <button id="womensBtn" class="gender-btn-inactive px-6 py-2 rounded-lg font-semibold cursor-pointer transition-all" style="background: #e5e7eb; color: #374151; border: none;">
+                    <i class="bi bi-gender-female mr-2"></i> Women's Team
+                </button>
+            </div>
+            
+            <!-- STATS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="stat-card border-l-4 border-[#800020]">
+                    <div class="flex justify-between items-start">
+                        <div><p class="text-xs text-gray-500 font-medium uppercase">Team Size</p><h3 class="text-2xl font-bold mt-1" id="teamSize">12</h3></div>
+                        <div class="p-3 bg-red-50 text-[#800020] rounded-md"><i class="bi bi-people-fill text-lg"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card border-l-4 border-green-500">
+                    <div class="flex justify-between items-start">
+                        <div><p class="text-xs text-gray-500 font-medium uppercase">Avg GPA</p><h3 class="text-2xl font-bold mt-1" id="avgGpa">3.28</h3></div>
+                        <div class="p-3 bg-green-50 text-green-600 rounded-md"><i class="bi bi-book-fill text-lg"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card border-l-4 border-blue-500">
+                    <div class="flex justify-between items-start">
+                        <div><p class="text-xs text-gray-500 font-medium uppercase">Win/Loss Record</p><h3 class="text-2xl font-bold mt-1" id="record">7-3</h3></div>
+                        <div class="p-3 bg-blue-50 text-blue-600 rounded-md"><i class="bi bi-trophy-fill text-lg"></i></div>
+                    </div>
+                </div>
+                <div class="stat-card border-l-4 border-orange-500">
+                    <div class="flex justify-between items-start">
+                        <div><p class="text-xs text-gray-500 font-medium uppercase">Team Health</p><h3 class="text-2xl font-bold mt-1" id="teamHealth">10/2</h3></div>
+                        <div class="p-3 bg-orange-50 text-orange-600 rounded-md"><i class="bi bi-heart-pulse-fill text-lg"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROSTER TABLE & SCHEDULE -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <div class="lg:col-span-2 card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Team Roster</h3>
+                        <div class="flex gap-2">
+                            <button id="exportBtn" class="btn-secondary text-sm" onclick="exportRoster()"><i class="bi bi-download"></i> Export</button>
+                            <button id="addPlayerBtn" class="btn-primary text-sm" onclick="openAddPlayerModal()"><i class="bi bi-plus-lg"></i> Add Player</button>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Position</th>
+                                    <th>Year</th>
+                                    <th id="gpaHeader">GPA</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rosterBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Upcoming Schedule</h3>
+                        <button id="messageTeamBtn" class="btn-primary text-sm" onclick="openMessageTeamModal()"><i class="bi bi-chat-dots"></i> Message Team</button>
+                    </div>
+                    <div id="scheduleList"></div>
+                </div>
+            </div>
+
+            <!-- PERFORMANCE CHART & TOP PERFORMERS -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Recent Match Performance</h3>
+                        <span class="text-xs text-gray-400">Last 5 Games</span>
+                    </div>
+                    <div class="p-4">
+                        <div id="performanceChart" style="height: 300px;"></div>
+                    </div>
+                </div>
+                <div class="card-box">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800">Top Performers</h3>
+                        <span class="text-xs text-gray-400">This Season</span>
+                    </div>
+                    <div class="p-4 space-y-4" id="topPerformers"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div class="modal" id="addPlayerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Add New Player</h3>
+                <button onclick="closeAddPlayerModal()"><i class="bi bi-x-lg text-xl"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Full Name</label><input type="text" id="playerName" class="form-input" placeholder="Enter full name"></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Position</label><select id="playerPosition" class="form-select"><option>Goalkeeper</option><option>Defender</option><option>Winger</option><option>Pivot</option></select></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Year</label><select id="playerYear" class="form-select"><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option></select></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">GPA</label><input type="number" step="0.01" min="0" max="4" id="playerGpa" class="form-input" value="3.0"></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Status</label><select id="playerStatus" class="form-select"><option value="Healthy">Healthy</option><option value="Injured">Injured</option><option value="Warning">Academic Warning</option></select></div>
+            </div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="closeAddPlayerModal()">Cancel</button><button class="btn-primary" onclick="addPlayerWithPermission()">Add Player</button></div>
+        </div>
+    </div>
+
+    <div class="modal" id="messageTeamModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Message Futsal Team</h3>
+                <button onclick="closeMessageTeamModal()"><i class="bi bi-x-lg text-xl"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Send To</label><div class="bg-gray-100 p-2 rounded text-sm text-gray-600"><i class="bi bi-people-fill mr-1"></i> <span id="teamCountDisplay">12</span> players</div></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Message Type</label><select id="messageType" class="form-select"><option value="Announcement">📢 Announcement</option><option value="Reminder">⏰ Reminder</option><option value="Urgent">⚠️ Urgent</option><option value="General">💬 General</option></select></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Subject</label><input type="text" id="messageSubject" class="form-input" placeholder="Enter subject"></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Message</label><textarea id="messageBody" class="form-textarea" rows="5" placeholder="Type your message..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="closeMessageTeamModal()">Cancel</button><button class="btn-primary" onclick="sendTeamMessageWithPermission()">Send Message</button></div>
+        </div>
+    </div>
+
+    <div class="modal" id="messagePlayerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="text-xl font-bold">Message Player</h3>
+                <button onclick="closeMessagePlayerModal()"><i class="bi bi-x-lg text-xl"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">To</label><div class="bg-gray-100 p-2 rounded text-sm text-gray-600" id="playerNameDisplay"><i class="bi bi-person-fill mr-1"></i> Player Name</div></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Subject</label><input type="text" id="playerMessageSubject" class="form-input" placeholder="Enter subject"></div>
+                <div class="mb-4"><label class="block text-sm font-medium mb-1">Message</label><textarea id="playerMessageBody" class="form-textarea" rows="5" placeholder="Type your message..."></textarea></div>
+            </div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="closeMessagePlayerModal()">Cancel</button><button class="btn-primary" onclick="sendPlayerMessageWithPermission()">Send Message</button></div>
+        </div>
+    </div>
+
+    <div class="toast success" id="toast">
+        <i class="bi bi-check-circle-fill text-green-600" id="toastIcon"></i>
+        <div><p class="font-medium" id="toastTitle"></p><p class="text-sm text-gray-500" id="toastMsg"></p></div>
+    </div>
+
+    <script>
+        // ============================================
+        // ROLE-BASED ACCESS CONTROL FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function canViewAllGPA() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
+        function canEdit() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach';
+        }
+
+        function canSendMessages() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach';
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) userNameElem.innerText = userName || 'User';
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        function hideGpaHeaderForStudents() {
+            if (isStudent()) {
+                const gpaHeader = document.getElementById('gpaHeader');
+                if (gpaHeader) {
+                    gpaHeader.style.display = 'none';
+                }
+            }
+        }
+
+        function hideButtonsForStudents() {
+            if (isStudent()) {
+                const addBtn = document.getElementById('addPlayerBtn');
+                const msgBtn = document.getElementById('messageTeamBtn');
+                const exportBtn = document.getElementById('exportBtn');
+                if (addBtn) addBtn.style.display = 'none';
+                if (msgBtn) msgBtn.style.display = 'none';
+                if (exportBtn) exportBtn.style.display = 'none';
+            }
+        }
+
+        checkAuth();
+        updateHeaderWithUser();
+        hideGpaHeaderForStudents();
+        hideButtonsForStudents();
+
+        // ========== MEN'S FUTSAL DATA ==========
+        const mensPlayers = [
+            { id: 1, name: "Carlos Mendez", position: "Goalkeeper", year: "Senior", gpa: 3.45, status: "Healthy" },
+            { id: 2, name: "Lucas Silva", position: "Defender", year: "Junior", gpa: 3.20, status: "Healthy" },
+            { id: 3, name: "Mateo Rodriguez", position: "Winger", year: "Senior", gpa: 3.15, status: "Injured" },
+            { id: 4, name: "Diego Fernandez", position: "Pivot", year: "Junior", gpa: 3.60, status: "Healthy" },
+            { id: 5, name: "Santiago Cruz", position: "Defender", year: "Sophomore", gpa: 2.95, status: "Warning" },
+            { id: 6, name: "Rafael Santos", position: "Winger", year: "Freshman", gpa: 3.80, status: "Healthy" },
+            { id: 7, name: "Javier Torres", position: "Goalkeeper", year: "Sophomore", gpa: 3.30, status: "Healthy" },
+            { id: 8, name: "Andres Vargas", position: "Pivot", year: "Senior", gpa: 3.25, status: "Injured" },
+            { id: 9, name: "Fernando Ruiz", position: "Defender", year: "Junior", gpa: 3.50, status: "Healthy" },
+            { id: 10, name: "Pablo Gomez", position: "Winger", year: "Freshman", gpa: 3.70, status: "Healthy" },
+            { id: 11, name: "Miguel Herrera", position: "Pivot", year: "Sophomore", gpa: 3.10, status: "Healthy" },
+            { id: 12, name: "Alejandro Diaz", position: "Defender", year: "Junior", gpa: 2.85, status: "Warning" }
+        ];
+
+        // ========== WOMEN'S FUTSAL DATA ==========
+        const womensPlayers = [
+            { id: 1, name: "Sofia Ramirez", position: "Goalkeeper", year: "Senior", gpa: 3.75, status: "Healthy" },
+            { id: 2, name: "Isabella Torres", position: "Defender", year: "Junior", gpa: 3.55, status: "Healthy" },
+            { id: 3, name: "Valentina Gomez", position: "Winger", year: "Senior", gpa: 3.68, status: "Healthy" },
+            { id: 4, name: "Camila Fernandez", position: "Pivot", year: "Junior", gpa: 3.90, status: "Healthy" },
+            { id: 5, name: "Lucia Herrera", position: "Defender", year: "Sophomore", gpa: 3.20, status: "Injured" },
+            { id: 6, name: "Martina Ruiz", position: "Winger", year: "Freshman", gpa: 3.95, status: "Healthy" },
+            { id: 7, name: "Ana Maria Diaz", position: "Goalkeeper", year: "Sophomore", gpa: 3.60, status: "Healthy" },
+            { id: 8, name: "Elena Castro", position: "Pivot", year: "Senior", gpa: 3.45, status: "Healthy" },
+            { id: 9, name: "Paula Vargas", position: "Defender", year: "Junior", gpa: 3.30, status: "Warning" },
+            { id: 10, name: "Daniela Soto", position: "Winger", year: "Freshman", gpa: 3.85, status: "Healthy" }
+        ];
+
+        // ========== STATS ==========
+        const mensStats = { teamSize: 12, avgGpa: 3.28, record: "7-3", healthy: 10, injured: 2 };
+        const womensStats = { teamSize: 10, avgGpa: 3.62, record: "8-2", healthy: 9, injured: 1 };
+
+        // ========== GAME SCORES (Goals) ==========
+        const mensGameScores = [
+            { game: "vs GUST", points: 5, opponent: 3 },
+            { game: "at KU", points: 4, opponent: 2 },
+            { game: "vs AU", points: 2, opponent: 4 },
+            { game: "at GUST", points: 6, opponent: 3 },
+            { game: "vs KU", points: 3, opponent: 3 }
+        ];
+
+        const womensGameScores = [
+            { game: "vs GUST", points: 4, opponent: 2 },
+            { game: "at KU", points: 5, opponent: 1 },
+            { game: "vs AU", points: 3, opponent: 3 },
+            { game: "at GUST", points: 4, opponent: 2 },
+            { game: "vs KU", points: 6, opponent: 1 }
+        ];
+
+        // ========== TOP PERFORMERS ==========
+        const mensTop = [
+            { name: "Diego Fernandez", stat: "12 Goals", icon: "bi-trophy-fill" },
+            { name: "Rafael Santos", stat: "8 Assists", icon: "bi-bar-chart-fill" },
+            { name: "Carlos Mendez", stat: "45 Saves", icon: "bi-star-fill" }
+        ];
+
+        const womensTop = [
+            { name: "Camila Fernandez", stat: "10 Goals", icon: "bi-trophy-fill" },
+            { name: "Martina Ruiz", stat: "7 Assists", icon: "bi-bar-chart-fill" },
+            { name: "Sofia Ramirez", stat: "38 Saves", icon: "bi-star-fill" }
+        ];
+
+        // ========== SCHEDULE ==========
+        const schedule = [
+            { date: "April 24, 2026", opponent: "vs Gulf University", location: "Home", time: "6:00 PM" },
+            { date: "April 27, 2026", opponent: "at Kuwait University", location: "Away", time: "5:00 PM" },
+            { date: "April 30, 2026", opponent: "Practice", location: "AUK Futsal Court", time: "7:00 AM" },
+            { date: "May 4, 2026", opponent: "vs American University", location: "Home", time: "7:00 PM" },
+            { date: "May 7, 2026", opponent: "at GUST", location: "Away", time: "6:30 PM" }
+        ];
+
+        // ========== CURRENT STATE ==========
+        let currentTeam = "mens";
+        let players = [...mensPlayers];
+        let currentStats = mensStats;
+        let currentGameScores = mensGameScores;
+        let currentTop = mensTop;
+        let currentFilter = "";
+        let currentPlayerName = "";
+
+        // ========== RENDER FUNCTIONS WITH GPA PRIVACY ==========
+        function renderRoster() {
+    const tbody = document.getElementById('rosterBody');
+    let filtered = players.filter(p => p.name.toLowerCase().includes(currentFilter));
+    let html = '';
+    const isStudentUser = isStudent();
+    const currentUserName = getUserName();
+    const canViewAllGpa = canViewAllGPA();
+    
+    filtered.forEach(p => {
+        let tagClass = p.status === 'Healthy' ? 'tag-green' : (p.status === 'Injured' ? 'tag-red' : 'tag-orange');
+        
+        // Determine if GPA should be shown
+        let showGpa = false;
+        if (canViewAllGpa) {
+            showGpa = true;
+        } else if (isStudentUser && p.name === currentUserName) {
+            showGpa = true;
+        }
+        
+        let gpaDisplay = showGpa ? p.gpa.toFixed(2) : '—';
+        let gpaClass = showGpa ? 'font-semibold' : 'text-gray-400 italic text-center';
+        
+        html += `<tr>
+            <td><a href="profile.html?id=${p.id}" class="font-medium text-gray-800 hover:text-[#800020] hover:underline">${p.name}</a></a>
+            <td><span class="tag tag-blue">${p.position}</span></a>
+            <td class="text-gray-500">${p.year}</a>`;
+        
+        // GPA column - always present, but content changes based on permissions
+        html += `<td class="${gpaClass}">${gpaDisplay}</a>`;
+        
+        // Status column
+        html += `<td class="text-center"><span class="tag ${tagClass}">${p.status}</span></a>`;
+        
+        // Action column - message button
+        if (!isStudentUser) {
+            html += `<td><button class="text-[#800020] hover:underline text-sm" onclick="openMessagePlayerModal('${p.name}')"><i class="bi bi-chat-dots"></i></button></a>`;
+        } else {
+            html += `<td class="text-center text-gray-400">—</a>`;
+        }
+        
+        html += `</tr>`;
+    });
+    tbody.innerHTML = html;
+    document.getElementById('teamCountDisplay').innerText = players.length;
+}
+
+        function updateStats() {
+            document.getElementById('teamSize').innerText = currentStats.teamSize;
+            document.getElementById('avgGpa').innerText = currentStats.avgGpa;
+            document.getElementById('record').innerText = currentStats.record;
+            document.getElementById('teamHealth').innerText = `${currentStats.healthy}/${currentStats.injured}`;
+        }
+
+        function renderSchedule() {
+            let html = '';
+            schedule.forEach(s => {
+                html += `<div class="schedule-item"><div class="flex justify-between items-center"><div><div class="schedule-date">${s.date}</div><div class="font-semibold text-gray-800">${s.opponent}</div><div class="text-xs text-gray-400">${s.location} • ${s.time}</div></div><i class="bi bi-calendar text-gray-300 text-xl"></i></div></div>`;
+            });
+            document.getElementById('scheduleList').innerHTML = html;
+        }
+
+        function renderChart() {
+            Highcharts.chart('performanceChart', {
+                chart: { type: 'column' }, title: { text: null },
+                xAxis: { categories: currentGameScores.map(g => g.game) },
+                yAxis: { title: { text: 'Goals' }, min: 0 },
+                series: [
+                    { name: 'AUK Futsal', data: currentGameScores.map(g => g.points), color: '#800020' },
+                    { name: 'Opponent', data: currentGameScores.map(g => g.opponent), color: '#bfa15e' }
+                ],
+                credits: { enabled: false }
+            });
+        }
+
+        function renderTopPerformers() {
+            let html = '';
+            currentTop.forEach(p => {
+                html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-[#800020]/10 rounded-full flex items-center justify-center"><i class="bi ${p.icon} text-[#800020]"></i></div><div><p class="font-semibold">${p.name}</p><p class="text-xs text-gray-500">${p.stat}</p></div></div><i class="bi bi-arrow-right text-gray-300"></i></div>`;
+            });
+            document.getElementById('topPerformers').innerHTML = html;
+        }
+
+        function refreshAll() {
+            renderRoster();
+            updateStats();
+            renderChart();
+            renderTopPerformers();
+        }
+
+        // ========== GENDER SWITCH FUNCTIONS ==========
+        function switchToMens() {
+            currentTeam = "mens";
+            players = [...mensPlayers];
+            currentStats = mensStats;
+            currentGameScores = mensGameScores;
+            currentTop = mensTop;
+            
+            document.getElementById('mensBtn').style.background = "#800020";
+            document.getElementById('mensBtn').style.color = "white";
+            document.getElementById('womensBtn').style.background = "#e5e7eb";
+            document.getElementById('womensBtn').style.color = "#374151";
+            
+            document.getElementById('teamSubtitle').innerHTML = "Men's Varsity • Team roster, performance metrics, and schedule";
+            
+            refreshAll();
+            showToast("Switched", "Viewing Men's Futsal Team", "info");
+        }
+
+        function switchToWomens() {
+            currentTeam = "womens";
+            players = [...womensPlayers];
+            currentStats = womensStats;
+            currentGameScores = womensGameScores;
+            currentTop = womensTop;
+            
+            document.getElementById('womensBtn').style.background = "#800020";
+            document.getElementById('womensBtn').style.color = "white";
+            document.getElementById('mensBtn').style.background = "#e5e7eb";
+            document.getElementById('mensBtn').style.color = "#374151";
+            
+            document.getElementById('teamSubtitle').innerHTML = "Women's Varsity • Team roster, performance metrics, and schedule";
+            
+            refreshAll();
+            showToast("Switched", "Viewing Women's Futsal Team", "info");
+        }
+
+        // ========== BUTTON EVENT LISTENERS ==========
+        document.getElementById('mensBtn').onclick = switchToMens;
+        document.getElementById('womensBtn').onclick = switchToWomens;
+
+        // ========== PERMISSION-BASED FUNCTIONS ==========
+        function searchTable() {
+            currentFilter = document.getElementById('searchInput').value.toLowerCase();
+            renderRoster();
+        }
+
+        function toggleNotifications() {
+            document.getElementById('notifDropdown').classList.toggle('show');
+        }
+
+        function openAddPlayerModal() {
+            if (!canEdit()) {
+                showToast("Access Denied", "You don't have permission to add players", "error");
+                return;
+            }
+            document.getElementById('playerName').value = '';
+            document.getElementById('playerPosition').value = 'Goalkeeper';
+            document.getElementById('playerYear').value = 'Freshman';
+            document.getElementById('playerGpa').value = '3.0';
+            document.getElementById('playerStatus').value = 'Healthy';
+            document.getElementById('addPlayerModal').classList.add('active');
+        }
+
+        function closeAddPlayerModal() {
+            document.getElementById('addPlayerModal').classList.remove('active');
+        }
+
+        function addPlayerWithPermission() {
+            if (!canEdit()) {
+                showToast("Access Denied", "You don't have permission to add players", "error");
+                closeAddPlayerModal();
+                return;
+            }
+            
+            const name = document.getElementById('playerName').value.trim();
+            if (!name) { showToast("Error", "Please enter player name", "error"); return; }
+            
+            const newPlayer = {
+                id: players.length + 1,
+                name: name,
+                position: document.getElementById('playerPosition').value,
+                year: document.getElementById('playerYear').value,
+                gpa: parseFloat(document.getElementById('playerGpa').value),
+                status: document.getElementById('playerStatus').value
+            };
+            players.push(newPlayer);
+            renderRoster();
+            closeAddPlayerModal();
+            showToast("Success", `${name} added to roster`, "success");
+        }
+
+        function openMessageTeamModal() {
+            if (!canSendMessages()) {
+                showToast("Access Denied", "You don't have permission to send messages", "error");
+                return;
+            }
+            document.getElementById('messageSubject').value = '';
+            document.getElementById('messageBody').value = '';
+            document.getElementById('messageTeamModal').classList.add('active');
+        }
+
+        function closeMessageTeamModal() {
+            document.getElementById('messageTeamModal').classList.remove('active');
+        }
+
+        function sendTeamMessageWithPermission() {
+            if (!canSendMessages()) {
+                showToast("Access Denied", "You don't have permission to send messages", "error");
+                closeMessageTeamModal();
+                return;
+            }
+            
+            const subject = document.getElementById('messageSubject').value.trim();
+            const body = document.getElementById('messageBody').value.trim();
+            if (!subject || !body) { showToast("Error", "Please fill all fields", "error"); return; }
+            showToast("Message Sent", `"${subject}" sent to ${players.length} players`, "success");
+            closeMessageTeamModal();
+        }
+
+        function openMessagePlayerModal(playerName) {
+            if (!canSendMessages()) {
+                showToast("Access Denied", "You don't have permission to send messages", "error");
+                return;
+            }
+            currentPlayerName = playerName;
+            document.getElementById('playerNameDisplay').innerHTML = `<i class="bi bi-person-fill mr-1"></i> ${playerName}`;
+            document.getElementById('playerMessageSubject').value = '';
+            document.getElementById('playerMessageBody').value = '';
+            document.getElementById('messagePlayerModal').classList.add('active');
+        }
+
+        function closeMessagePlayerModal() {
+            document.getElementById('messagePlayerModal').classList.remove('active');
+        }
+
+        function sendPlayerMessageWithPermission() {
+            if (!canSendMessages()) {
+                showToast("Access Denied", "You don't have permission to send messages", "error");
+                closeMessagePlayerModal();
+                return;
+            }
+            
+            const subject = document.getElementById('playerMessageSubject').value.trim();
+            const body = document.getElementById('playerMessageBody').value.trim();
+            if (!subject || !body) { showToast("Error", "Please fill all fields", "error"); return; }
+            showToast("Message Sent", `Message sent to ${currentPlayerName}`, "success");
+            closeMessagePlayerModal();
+        }
+
+        function exportRoster() {
+            if (isStudent()) {
+                showToast("Access Denied", "You don't have permission to export data", "error");
+                return;
+            }
+            let csv = "Name,Position,Year,GPA,Status\n";
+            players.forEach(p => { csv += `${p.name},${p.position},${p.year},${p.gpa},${p.status}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `futsal_${currentTeam}_roster.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast("Export Complete", "Roster exported as CSV", "success");
+        }
+
+        function showToast(title, message, type = "success") {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            if (type === "success") {
+                icon.className = "bi bi-check-circle-fill text-green-600";
+                toast.className = "toast success";
+            } else if (type === "error") {
+                icon.className = "bi bi-exclamation-triangle-fill text-red-600";
+                toast.className = "toast error";
+            } else {
+                icon.className = "bi bi-info-circle-fill text-blue-600";
+                toast.className = "toast info";
+            }
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMsg').innerText = message;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('addPlayerModal')) closeAddPlayerModal();
+            if (event.target === document.getElementById('messageTeamModal')) closeMessageTeamModal();
+            if (event.target === document.getElementById('messagePlayerModal')) closeMessagePlayerModal();
+        }
+
+        document.addEventListener('click', function(event) {
+            const notifWrapper = document.querySelector('.notification-wrapper');
+            const dropdown = document.getElementById('notifDropdown');
+            if (notifWrapper && !notifWrapper.contains(event.target) && dropdown) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // INITIALIZE
+        renderRoster();
+        renderSchedule();
+        renderChart();
+        renderTopPerformers();
+        updateStats();
+    </script>
+</body>
+</html>
