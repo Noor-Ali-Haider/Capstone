@@ -16,7 +16,7 @@
 
     <style>
         :root {
-            --primary: #800020;       /* Burgundy */
+            --primary: #800020;
             --primary-dark: #5c0017;
             --accent: #bfa15e;
             --bg-main: #f4f6f9;
@@ -31,7 +31,6 @@
             color: #333;
         }
 
-        /* --- Layout --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -53,7 +52,6 @@
             background-color: var(--bg-main);
         }
 
-        /* --- Components --- */
         .brand-area {
             padding: 1.5rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -92,7 +90,6 @@
             font-weight: 600;
         }
 
-        /* Sports Team Section in Sidebar */
         .nav-section-title {
             padding: 1.5rem 20px 0.5rem 20px;
             font-size: 11px;
@@ -106,7 +103,6 @@
             font-size: 0.9rem;
         }
 
-        /* Top Header */
         .top-header {
             background: white;
             height: 70px;
@@ -120,7 +116,6 @@
             z-index: 100;
         }
 
-        /* Page Specific Styles */
         .card {
             background: white;
             border-radius: 8px;
@@ -142,7 +137,6 @@
         .status-recovering { background: #fff7e6; color: #f9ab00; }
         .status-injured { background: #fce8e6; color: #c5221f; }
 
-        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -155,9 +149,7 @@
             justify-content: center;
             align-items: center;
         }
-        .modal.active {
-            display: flex;
-        }
+        .modal.active { display: flex; }
         .modal-content {
             background: white;
             border-radius: 12px;
@@ -168,14 +160,8 @@
             animation: modalSlideIn 0.3s ease;
         }
         @keyframes modalSlideIn {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .modal-header {
             padding: 1.5rem;
@@ -184,9 +170,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .modal-body {
-            padding: 1.5rem;
-        }
+        .modal-body { padding: 1.5rem; }
         .modal-footer {
             padding: 1.5rem;
             border-top: 1px solid #e0e0e0;
@@ -206,10 +190,7 @@
         }
         .btn-secondary:hover { background: #e5e7eb; }
 
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
+        .form-group { margin-bottom: 1.5rem; }
         .form-label {
             display: block;
             margin-bottom: 0.5rem;
@@ -230,7 +211,6 @@
             box-shadow: 0 0 0 3px rgba(128,0,32,0.1);
         }
 
-        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -261,7 +241,7 @@
 </head>
 <body>
 
-    <!-- ==================== SIDEBAR (IDENTICAL TO OTHER PAGES) ==================== -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand-area">
             <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
@@ -276,84 +256,58 @@
                 <i class="bi bi-grid-1x2-fill"></i>
                 <span>Dashboard</span>
             </a>
-
-            <a href="athletes.html" class="nav-item active">
+            <a href="athletes.html" class="nav-item">
                 <i class="bi bi-people-fill"></i>
                 <span>Athletes</span>
             </a>
-
             <a href="attendance.html" class="nav-item">
-        <i class="bi bi-calendar-check-fill"></i>
-        <span>Attendance</span>
-    </a>
-
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
             <a href="training.html" class="nav-item">
                 <i class="bi bi-calendar-check-fill"></i>
                 <span>Training & Sessions</span>
             </a>
-
             <a href="health.html" class="nav-item">
                 <i class="bi bi-heart-pulse-fill"></i>
                 <span>Health & Wellness</span>
             </a>
-
             <a href="checkin.html" class="nav-item">
                 <i class="bi bi-clipboard2-pulse-fill"></i>
                 <span>Wellness Check-In</span>
             </a>
-
             <a href="analytics.html" class="nav-item">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Analytics</span>
             </a>
-
             <a href="announcements.html" class="nav-item">
                 <i class="bi bi-megaphone-fill"></i>
                 <span>Announcements</span>
             </a>
 
-            <!-- SPORTS TEAMS SECTION -->
             <div class="nav-section-title">Sports Teams</div>
-            
-            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Basketball</span>
-            </a>
-            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
-                <i class="bi bi-vinyl"></i>
-                <span>Volleyball</span>
-            </a>
-            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
-                <i class="bi bi-futbol"></i>
-                <span>Futsal</span>
-            </a>
-            <a href="athletes.html?sport=Football" class="nav-item sub-item">
-                <i class="bi bi-life-preserver"></i>
-                <span>Football</span>
-            </a>
-            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
-                <i class="bi bi-tennis"></i>
-                <span>Padel</span>
-            </a>
-
+            <a href="basketball.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Basketball</span></a>
+            <a href="volleyball.html" class="nav-item sub-item"><i class="bi bi-vinyl"></i><span>Volleyball</span></a>
+            <a href="futsal.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Futsal</span></a>
+            <a href="football.html" class="nav-item sub-item"><i class="bi bi-life-preserver"></i><span>Football</span></a>
+            <a href="padel.html" class="nav-item sub-item"><i class="bi bi-circle-fill"></i><span>Padel</span></a>
         </nav>
 
         <div class="border-t border-white/10 p-3 mt-auto">
-            <div class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item" onclick="logout()">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Logout</span>
             </div>
         </div>
     </aside>
 
-    <!-- ==================== MAIN CONTENT ==================== -->
+    <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         
-        <!-- Top Header -->
         <header class="top-header">
             <div class="flex items-center gap-3">
                 <a href="athletes.html" class="text-gray-400 hover:text-gray-600">
@@ -365,12 +319,11 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <button class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50" onclick="openEditModal()">
-                    <i class="bi bi-pencil mr-1"></i> Edit
-                </button>
-                <button class="btn-primary text-sm" onclick="openMessageModal()">
-                    <i class="bi bi-chat-dots mr-1"></i> Message
-                </button>
+                <div class="text-right hidden sm:block mr-3">
+                    <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                    <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
+                </div>
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
             </div>
         </header>
 
@@ -380,12 +333,8 @@
             <!-- Profile Header Card -->
             <div class="card p-6 mb-6">
                 <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
-                    <!-- Avatar -->
-                    <div class="w-32 h-32 bg-[#800020] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg border-4 border-white" id="avatarInitials">
-                        SJ
-                    </div>
+                    <div class="w-32 h-32 bg-[#800020] rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-lg border-4 border-white" id="avatarInitials">SJ</div>
                     
-                    <!-- Info -->
                     <div class="flex-grow text-center md:text-left">
                         <h1 class="text-3xl font-bold text-gray-900" id="profileName">Sarah Johnson</h1>
                         <p class="text-lg text-gray-500 mt-1" id="profileDetails">Junior • Basketball</p>
@@ -422,21 +371,21 @@
                                 <p class="font-semibold text-sm">Fall 2023</p>
                                 <p class="text-xs text-gray-500">12 Credits</p>
                             </div>
-                            <span class="font-bold text-lg text-[#800020]">3.80</span>
+                            <span class="font-bold text-lg text-[#800020]" id="gpaFall2023">3.80</span>
                         </div>
                         <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                             <div>
                                 <p class="font-semibold text-sm">Spring 2023</p>
                                 <p class="text-xs text-gray-500">15 Credits</p>
                             </div>
-                            <span class="font-bold text-lg text-[#800020]">3.65</span>
+                            <span class="font-bold text-lg text-[#800020]" id="gpaSpring2023">3.65</span>
                         </div>
                         <div class="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                             <div>
                                 <p class="font-semibold text-sm">Fall 2022</p>
                                 <p class="text-xs text-gray-500">15 Credits</p>
                             </div>
-                            <span class="font-bold text-lg text-[#800020]">3.70</span>
+                            <span class="font-bold text-lg text-[#800020]" id="gpaFall2022">3.70</span>
                         </div>
                     </div>
                 </div>
@@ -495,7 +444,7 @@
         </div>
     </div>
 
-    <!-- ==================== EDIT MODAL ==================== -->
+    <!-- EDIT MODAL -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -508,19 +457,17 @@
                 <form id="editForm">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
-                        <input type="text" class="form-input" id="editName" value="Sarah Johnson">
+                        <input type="text" class="form-input" id="editName">
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Year</label>
                         <select class="form-select" id="editYear">
                             <option>Freshman</option>
-                            <option selected>Sophomore</option>
+                            <option>Sophomore</option>
                             <option>Junior</option>
                             <option>Senior</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Team</label>
                         <select class="form-select" id="editTeam">
@@ -531,34 +478,29 @@
                             <option>Padel</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">GPA</label>
-                        <input type="number" step="0.01" min="0" max="4" class="form-input" id="editGPA" value="3.70">
+                        <input type="number" step="0.01" min="0" max="4" class="form-input" id="editGPA">
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Games Played</label>
-                        <input type="number" class="form-input" id="editGames" value="18">
+                        <input type="number" class="form-input" id="editGames">
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Status</label>
                         <select class="form-select" id="editStatus">
-                            <option selected>Healthy</option>
+                            <option>Healthy</option>
                             <option>Recovering</option>
                             <option>Injured</option>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="editEmail" value="sarah.johnson@auk.edu.kw">
+                        <input type="email" class="form-input" id="editEmail">
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Phone</label>
-                        <input type="tel" class="form-input" id="editPhone" value="+965 1234-5678">
+                        <input type="tel" class="form-input" id="editPhone">
                     </div>
                 </form>
             </div>
@@ -569,7 +511,7 @@
         </div>
     </div>
 
-    <!-- ==================== MESSAGE MODAL ==================== -->
+    <!-- MESSAGE MODAL -->
     <div class="modal" id="messageModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -582,14 +524,12 @@
                 <form id="messageForm">
                     <div class="form-group">
                         <label class="form-label">To</label>
-                        <input type="text" class="form-input" id="messageTo" value="Sarah Johnson" readonly disabled>
+                        <input type="text" class="form-input" id="messageTo" readonly disabled>
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Subject</label>
                         <input type="text" class="form-input" id="messageSubject" placeholder="Enter subject...">
                     </div>
-                    
                     <div class="form-group">
                         <label class="form-label">Message</label>
                         <textarea class="form-textarea" id="messageBody" rows="5" placeholder="Type your message here..."></textarea>
@@ -603,7 +543,7 @@
         </div>
     </div>
 
-    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <!-- TOAST -->
     <div class="toast" id="toast">
         <i class="bi" id="toastIcon"></i>
         <div>
@@ -613,7 +553,94 @@
     </div>
 
     <script>
-        // Mock Data
+        // ============================================
+        // ROLE-BASED ACCESS CONTROL FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function canEditProfile() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach';
+        }
+
+        function canSendMessages() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
+        function canViewGPA(athleteName) {
+            const role = getUserRole();
+            const userName = getUserName();
+            
+            if (role === 'admin' || role === 'coach' || role === 'assistant_coach') {
+                return true;
+            }
+            if (role === 'student' && athleteName === userName) {
+                return true;
+            }
+            return false;
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) userNameElem.innerText = userName || 'User';
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        checkAuth();
+        updateHeaderWithUser();
+
+        // ============================================
+        // MOCK DATA
+        // ============================================
         const athletes = [
             { 
                 id: 1, 
@@ -625,7 +652,8 @@
                 games: "18",
                 status: "Healthy",
                 email: "sarah.johnson@auk.edu.kw",
-                phone: "+965 1234-5678"
+                phone: "+965 1234-5678",
+                gpaHistory: { fall2023: "3.80", spring2023: "3.65", fall2022: "3.70" }
             },
             { 
                 id: 2, 
@@ -637,7 +665,8 @@
                 games: "12",
                 status: "Recovering",
                 email: "james.williams@auk.edu.kw",
-                phone: "+965 2345-6789"
+                phone: "+965 2345-6789",
+                gpaHistory: { fall2023: "3.30", spring2023: "3.25", fall2022: "3.10" }
             },
             { 
                 id: 3, 
@@ -649,7 +678,8 @@
                 games: "22",
                 status: "Healthy",
                 email: "david.martinez@auk.edu.kw",
-                phone: "+965 3456-7890"
+                phone: "+965 3456-7890",
+                gpaHistory: { fall2023: "3.95", spring2023: "3.88", fall2022: "3.85" }
             },
             { 
                 id: 4, 
@@ -661,7 +691,8 @@
                 games: "8",
                 status: "Healthy",
                 email: "marcus.davis@auk.edu.kw",
-                phone: "+965 4567-8901"
+                phone: "+965 4567-8901",
+                gpaHistory: { fall2023: "3.50", spring2023: "N/A", fall2022: "N/A" }
             },
             { 
                 id: 5, 
@@ -673,7 +704,8 @@
                 games: "15",
                 status: "Injured",
                 email: "lisa.thompson@auk.edu.kw",
-                phone: "+965 5678-9012"
+                phone: "+965 5678-9012",
+                gpaHistory: { fall2023: "3.85", spring2023: "3.78", fall2022: "3.75" }
             }
         ];
 
@@ -682,26 +714,58 @@
         const id = urlParams.get('id');
         
         let currentAthlete = athletes.find(a => a.id == id) || athletes[0];
+        const canEdit = canEditProfile();
+        const canMsg = canSendMessages();
 
-        // Update profile display
+        // Update profile display with GPA privacy
         function updateProfileDisplay() {
             document.getElementById('avatarInitials').innerText = currentAthlete.initials;
             document.getElementById('profileName').innerText = currentAthlete.name;
             document.getElementById('profileDetails').innerText = `${currentAthlete.year} • ${currentAthlete.team}`;
-            document.getElementById('profileGPA').innerText = currentAthlete.gpa;
             document.getElementById('profileGames').innerText = currentAthlete.games;
+            document.getElementById('profileEmail').innerText = currentAthlete.email;
+            document.getElementById('profilePhone').innerText = currentAthlete.phone;
             
             const statusSpan = document.getElementById('profileStatus');
             statusSpan.innerText = currentAthlete.status;
             statusSpan.className = `inline-block mt-1 px-3 py-1 rounded-full text-sm font-semibold status-${currentAthlete.status.toLowerCase()}`;
             
-            document.getElementById('profileEmail').innerText = currentAthlete.email;
-            document.getElementById('profilePhone').innerText = currentAthlete.phone;
+            // GPA visibility
+            const canViewGpa = canViewGPA(currentAthlete.name);
+            const gpaElement = document.getElementById('profileGPA');
+            const gpaFall2023 = document.getElementById('gpaFall2023');
+            const gpaSpring2023 = document.getElementById('gpaSpring2023');
+            const gpaFall2022 = document.getElementById('gpaFall2022');
+            
+            if (canViewGpa) {
+                gpaElement.innerText = currentAthlete.gpa;
+                gpaFall2023.innerText = currentAthlete.gpaHistory?.fall2023 || '—';
+                gpaSpring2023.innerText = currentAthlete.gpaHistory?.spring2023 || '—';
+                gpaFall2022.innerText = currentAthlete.gpaHistory?.fall2022 || '—';
+            } else {
+                gpaElement.innerText = '—';
+                gpaFall2023.innerText = '—';
+                gpaSpring2023.innerText = '—';
+                gpaFall2022.innerText = '—';
+            }
         }
+
+        // Hide edit and message buttons for unauthorized users
+        function hideActionButtons() {
+            const buttons = document.querySelectorAll('.top-header .flex.gap-3 button');
+            if (!canEdit && buttons[0]) buttons[0].style.display = 'none';
+            if (!canMsg && buttons[1]) buttons[1].style.display = 'none';
+        }
+
+        hideActionButtons();
 
         // Edit Modal Functions
         function openEditModal() {
-            // Populate form with current values
+            if (!canEdit) {
+                showToast('info', 'Access Denied', 'You do not have permission to edit this profile.');
+                return;
+            }
+            
             document.getElementById('editName').value = currentAthlete.name;
             document.getElementById('editYear').value = currentAthlete.year;
             document.getElementById('editTeam').value = currentAthlete.team;
@@ -719,7 +783,12 @@
         }
 
         function saveProfile() {
-            // Update currentAthlete with form values
+            if (!canEdit) {
+                showToast('info', 'Access Denied', 'You do not have permission to edit this profile.');
+                closeEditModal();
+                return;
+            }
+            
             currentAthlete.name = document.getElementById('editName').value;
             currentAthlete.year = document.getElementById('editYear').value;
             currentAthlete.team = document.getElementById('editTeam').value;
@@ -729,18 +798,18 @@
             currentAthlete.email = document.getElementById('editEmail').value;
             currentAthlete.phone = document.getElementById('editPhone').value;
             
-            // Update display
             updateProfileDisplay();
-            
-            // Close modal
             closeEditModal();
-            
-            // Show success toast
             showToast('success', 'Profile Updated', 'Athlete information has been saved successfully.');
         }
 
         // Message Modal Functions
         function openMessageModal() {
+            if (!canMsg) {
+                showToast('info', 'Access Denied', 'You do not have permission to send messages.');
+                return;
+            }
+            
             document.getElementById('messageTo').value = currentAthlete.name;
             document.getElementById('messageSubject').value = '';
             document.getElementById('messageBody').value = '';
@@ -752,6 +821,12 @@
         }
 
         function sendMessage() {
+            if (!canMsg) {
+                showToast('info', 'Access Denied', 'You do not have permission to send messages.');
+                closeMessageModal();
+                return;
+            }
+            
             const subject = document.getElementById('messageSubject').value;
             const body = document.getElementById('messageBody').value;
             
@@ -760,62 +835,45 @@
                 return;
             }
             
-            // Here you would typically send the message to a server
             console.log('Sending message to:', currentAthlete.name);
             console.log('Subject:', subject);
             console.log('Message:', body);
             
-            // Close modal
             closeMessageModal();
-            
-            // Show success toast
             showToast('success', 'Message Sent', `Your message to ${currentAthlete.name} has been sent.`);
         }
 
-        // Toast Notification Function
         function showToast(type, title, message) {
             const toast = document.getElementById('toast');
             const icon = document.getElementById('toastIcon');
             const titleEl = document.getElementById('toastTitle');
             const messageEl = document.getElementById('toastMessage');
             
-            // Set toast type
             toast.className = `toast ${type}`;
             
-            // Set icon based on type
             if (type === 'success') {
                 icon.className = 'bi bi-check-circle-fill text-green-600';
             } else {
                 icon.className = 'bi bi-info-circle-fill text-blue-600';
             }
             
-            // Set content
             titleEl.innerText = title;
             messageEl.innerText = message;
-            
-            // Show toast
             toast.classList.add('show');
             
-            // Hide after 3 seconds
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
         }
 
-        // Close modals when clicking outside
         window.onclick = function(event) {
             const editModal = document.getElementById('editModal');
             const messageModal = document.getElementById('messageModal');
             
-            if (event.target === editModal) {
-                closeEditModal();
-            }
-            if (event.target === messageModal) {
-                closeMessageModal();
-            }
+            if (event.target === editModal) closeEditModal();
+            if (event.target === messageModal) closeMessageModal();
         }
 
-        // Initialize profile
         updateProfileDisplay();
     </script>
 </body>
