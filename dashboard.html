@@ -13,10 +13,10 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+     
     <style>
         :root {
-            --primary: #800020;       /* Burgundy */
+            --primary: #800020;
             --primary-dark: #5c0017;
             --accent: #bfa15e;
             --bg-main: #f4f6f9;
@@ -31,7 +31,6 @@
             color: #333;
         }
 
-        /* Sidebar Layout */
         .sidebar {
             position: fixed;
             top: 0;
@@ -44,17 +43,14 @@
             display: flex;
             flex-direction: column;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            overflow-y: auto; /* Allow scroll if menu is long */
+            overflow-y: auto;
         }
 
-        /* Main Content Layout */
         .main-wrapper {
             margin-left: var(--sidebar-width);
             min-height: 100vh;
             background-color: var(--bg-main);
         }
-
-        /* --- Components --- */
 
         .brand-area {
             padding: 1.5rem;
@@ -94,7 +90,6 @@
             font-weight: 600;
         }
 
-        /* Sports Team Section in Sidebar */
         .nav-section-title {
             padding: 1.5rem 20px 0.5rem 20px;
             font-size: 11px;
@@ -104,7 +99,7 @@
             letter-spacing: 0.5px;
         }
         .nav-item.sub-item {
-            padding: 10px 20px 10px 24px; /* Slight indent */
+            padding: 10px 20px 10px 24px;
             font-size: 0.9rem;
         }
 
@@ -121,7 +116,6 @@
             z-index: 100;
         }
 
-        /* Notification Dropdown */
         .notification-wrapper { position: relative; }
         .notification-btn {
             background: none;
@@ -164,7 +158,6 @@
         .dropdown-item p { margin: 0; font-size: 13px; color: #444; }
         .dropdown-item span { font-size: 11px; color: #999; }
 
-        /* Cards */
         .stat-card {
             background: white;
             border-radius: 8px;
@@ -207,7 +200,6 @@
 
         .chart-area { padding: 1rem; display: flex; flex-direction: column; align-items: center; }
         
-        /* Interactive Chart Styles */
         #myChart { cursor: pointer; }
         
         .legend-item {
@@ -241,7 +233,7 @@
 </head>
 <body>
 
-    <!-- ==================== SIDEBAR ==================== -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand-area">
             <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
@@ -256,85 +248,58 @@
                 <i class="bi bi-grid-1x2-fill"></i>
                 <span>Dashboard</span>
             </a>
-
             <a href="athletes.html" class="nav-item">
                 <i class="bi bi-people-fill"></i>
                 <span>Athletes</span>
             </a>
-
             <a href="attendance.html" class="nav-item">
-        <i class="bi bi-calendar-check-fill"></i>
-        <span>Attendance</span>
-    </a>
-
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
             <a href="training.html" class="nav-item">
                 <i class="bi bi-calendar-check-fill"></i>
                 <span>Training & Sessions</span>
             </a>
-
             <a href="health.html" class="nav-item">
                 <i class="bi bi-heart-pulse-fill"></i>
                 <span>Health & Wellness</span>
             </a>
-
             <a href="checkin.html" class="nav-item">
                 <i class="bi bi-clipboard2-pulse-fill"></i>
                 <span>Wellness Check-In</span>
             </a>
-
             <a href="analytics.html" class="nav-item">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Analytics</span>
             </a>
-
             <a href="announcements.html" class="nav-item">
                 <i class="bi bi-megaphone-fill"></i>
                 <span>Announcements</span>
             </a>
 
-            <!-- SPORTS TEAMS SECTION -->
             <div class="nav-section-title">Sports Teams</div>
-            
-            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Basketball</span>
-            </a>
-            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
-                <i class="bi bi-vinyl"></i> <!-- Using vinyl as circle substitute -->
-                <span>Volleyball</span>
-            </a>
-            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Futsal</span>
-            </a>
-            <a href="athletes.html?sport=Football" class="nav-item sub-item">
-                <i class="bi bi-life-preserver"></i> <!-- Alternative icon -->
-                <span>Football</span>
-            </a>
-            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
-                <i class="bi bi-circle-fill"></i>
-
-                <span>Padel</span>
-            </a>
-
+            <a href="basketball.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Basketball</span></a>
+            <a href="volleyball.html" class="nav-item sub-item"><i class="bi bi-vinyl"></i><span>Volleyball</span></a>
+            <a href="futsal.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Futsal</span></a>
+            <a href="football.html" class="nav-item sub-item"><i class="bi bi-life-preserver"></i><span>Football</span></a>
+            <a href="padel.html" class="nav-item sub-item"><i class="bi bi-circle-fill"></i><span>Padel</span></a>
         </nav>
 
         <div class="border-t border-white/10 p-3 mt-auto">
-            <div class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item" onclick="logout()">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Logout</span>
             </div>
         </div>
     </aside>
 
-    <!-- ==================== MAIN CONTENT ==================== -->
+    <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         
-        <!-- Top Header -->
         <header class="top-header">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Student-Athlete Dashboard</h2>
@@ -342,25 +307,18 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <!-- Search Input -->
                 <div class="relative hidden md:block">
-                    <input 
-                        type="text" 
-                        id="searchInput"
-                        placeholder="Search athletes..." 
+                    <input type="text" id="searchInput" placeholder="Search athletes..." 
                         class="bg-gray-100 border-0 rounded-md py-2 pl-10 pr-4 text-sm w-56 focus:ring-2 focus:ring-[#800020]"
-                        onkeyup="searchTable()"
-                    >
+                        onkeyup="searchTable()">
                     <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 </div>
                 
-                <!-- Notification Bell -->
                 <div class="notification-wrapper">
                     <button class="notification-btn" onclick="toggleNotifications()">
                         <i class="bi bi-bell text-xl text-gray-500"></i>
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
-                    
                     <div id="notifDropdown" class="dropdown-menu">
                         <div class="dropdown-header">Notifications</div>
                         <div class="dropdown-item">
@@ -374,20 +332,17 @@
                     </div>
                 </div>
                 
-                <!-- Profile -->
+                <!-- Profile Section - Shows Logged In User -->
                 <div class="flex items-center gap-2 pl-3 border-l border-gray-200 ml-2">
                     <div class="text-right hidden sm:block">
-                        <p class="text-sm font-semibold">Admin User</p>
-                        <p class="text-xs text-gray-400">Director</p>
+                        <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                        <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
                     </div>
-                    <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">
-                        AD
-                    </div>
+                    <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
                 </div>
             </div>
         </header>
 
-        <!-- Page Content -->
         <div class="p-6 lg:p-8">
             
             <!-- Stats Cards -->
@@ -444,7 +399,6 @@
             <!-- Main Grid: Table & Chart -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Table Section -->
                 <div class="lg:col-span-2 card-box">
                     <div class="card-header">
                         <div class="flex items-center gap-3">
@@ -454,42 +408,132 @@
                         <button class="text-sm text-[#800020] font-semibold hover:underline">View All</button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table>
+                        <table class="w-full">
                             <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Sport</th>
                                     <th>Year</th>
-                                    <th>GPA</th>
+                                    <th id="gpaHeader">GPA</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-body">
-                                <!-- JS will insert rows here -->
-                            </tbody>
+                            <tbody id="table-body"></tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- Chart Section -->
                 <div class="card-box">
                     <div class="card-header">
                         <h3 class="font-bold text-gray-800">Athletes by Sport Team</h3>
-                        <button id="clearFilterBtn" class="text-xs text-gray-500 hover:text-[#800020] hidden" onclick="clearFilters()">
-                            Clear Filter
-                        </button>
+                        <button id="clearFilterBtn" class="text-xs text-gray-500 hover:text-[#800020] hidden" onclick="clearFilters()">Clear Filter</button>
                     </div>
                     <div class="chart-area">
                         <canvas id="myChart" width="220" height="220"></canvas>
                         <div id="legend" class="w-full mt-4 space-y-1 px-2"></div>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 
-    <!-- ==================== SCRIPTS ==================== -->
     <script>
+        // ============================================
+        // AUTHENTICATION & ROLE FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function getUserEmail() {
+            return localStorage.getItem('userEmail');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function isCoach() {
+            const role = getUserRole();
+            return role === 'coach' || role === 'assistant_coach';
+        }
+
+        function isAdmin() {
+            return getUserRole() === 'admin';
+        }
+
+        function canViewAllGPA() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        // Update header with logged-in user info
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) {
+                userNameElem.innerText = userName || 'User';
+            }
+            
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        // Hide GPA column for students
+        function hideGpaHeaderForStudents() {
+            if (isStudent()) {
+                const gpaHeader = document.getElementById('gpaHeader');
+                if (gpaHeader) {
+                    gpaHeader.style.display = 'none';
+                }
+            }
+        }
+
+        // Run auth and header update immediately
+        checkAuth();
+        updateHeaderWithUser();
+        hideGpaHeaderForStudents();
+
         // ==========================================
         // MOCK DATABASE DATA
         // ==========================================
@@ -500,10 +544,11 @@
                 { id: 2, name: "James Williams", sport: "Soccer", year: "Freshman", gpa: 3.20 },
                 { id: 3, name: "Marcus Davis", sport: "Football", year: "Senior", gpa: 3.45 },
                 { id: 4, name: "Lisa Thompson", sport: "Tennis", year: "Junior", gpa: 3.60 },
-                { id: 5, name: "Robert Garcia", sport: "Volleyball", year: "Freshman", gpa: 3.68 }
+                { id: 5, name: "Robert Garcia", sport: "Volleyball", year: "Freshman", gpa: 3.68 },
+                { id: 6, name: "Student Athlete", sport: "Basketball", year: "Sophomore", gpa: 3.50 }
             ],
             chartData: [
-                { name: "Basketball", val: 1, color: "#f97316" },
+                { name: "Basketball", val: 2, color: "#f97316" },
                 { name: "Soccer", val: 1, color: "#22c55e" },
                 { name: "Football", val: 1, color: "#3b82f6" },
                 { name: "Tennis", val: 1, color: "#ec4899" },
@@ -511,7 +556,6 @@
             ]
         };
 
-        // State variables
         let currentSportFilter = null;
         let chartSegments = []; 
 
@@ -530,17 +574,13 @@
 
         function searchTable() {
             const input = document.getElementById('searchInput');
-            const filterText = input.value.toLowerCase();
+            const filterText = input ? input.value.toLowerCase() : '';
             
             let filteredData = dbData.athletes.filter(athlete => {
-                const matchesText = athlete.name.toLowerCase().includes(filterText) || 
-                       athlete.sport.toLowerCase().includes(filterText);
-                
+                const matchesText = athlete.name.toLowerCase().includes(filterText) || athlete.sport.toLowerCase().includes(filterText);
                 const matchesSport = !currentSportFilter || athlete.sport === currentSportFilter;
-
                 return matchesText && matchesSport;
             });
-
             renderTable(filteredData);
         }
 
@@ -558,7 +598,6 @@
 
         function filterBySport(sportName) {
             currentSportFilter = sportName;
-            
             const badgeContainer = document.getElementById('filterBadgeContainer');
             const clearBtn = document.getElementById('clearFilterBtn');
             
@@ -574,7 +613,6 @@
                 if(item.dataset.sport === sportName) item.classList.add('active');
                 else item.classList.remove('active');
             });
-
             searchTable();
         }
 
@@ -585,13 +623,14 @@
             renderTable(dbData.athletes);
         }
 
-        // ==========================================
-        // RENDERING LOGIC
-        // ==========================================
-        
         function renderTable(data) {
             const tbody = document.getElementById('table-body');
             let html = '';
+
+            const userRole = getUserRole();
+            const userName = getUserName();
+            const isStudentUser = (userRole === 'student');
+            const canViewAllGpa = (userRole === 'admin' || userRole === 'coach' || userRole === 'assistant_coach');
 
             if (data.length === 0) {
                 html = `<tr><td colspan="4" class="text-center py-8 text-gray-400">No athletes found</td></tr>`;
@@ -601,6 +640,17 @@
                     if(row.sport === 'Basketball') tagClass = 'tag-orange';
                     if(row.sport === 'Soccer') tagClass = 'tag-green';
                     
+                    // Determine if GPA should be shown
+                    let showGpa = false;
+                    if (canViewAllGpa) {
+                        showGpa = true;
+                    } else if (isStudentUser && row.name === userName) {
+                        showGpa = true;
+                    }
+                    
+                    let gpaDisplay = showGpa ? row.gpa.toFixed(2) : '---';
+                    let gpaClass = showGpa ? 'font-semibold' : 'text-gray-400 italic';
+                    
                     html += `
                         <tr>
                             <td>
@@ -608,7 +658,6 @@
                                     <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">
                                         ${row.name.split(' ').map(n => n[0]).join('')}
                                     </div>
-                                    <!-- CLICKABLE NAME -->
                                     <a href="profile.html?id=${row.id}" class="font-medium text-gray-800 hover:text-[#800020] hover:underline">
                                         ${row.name}
                                     </a>
@@ -616,7 +665,7 @@
                             </td>
                             <td><span class="tag ${tagClass}">${row.sport}</span></td>
                             <td class="text-gray-500">${row.year}</td>
-                            <td class="font-semibold">${row.gpa.toFixed(2)}</td>
+                            <td class="${gpaClass}">${gpaDisplay}</td>
                         </tr>
                     `;
                 });
@@ -650,12 +699,7 @@
                 ctx.fillStyle = segment.color;
                 ctx.fill();
 
-                chartSegments.push({
-                    name: segment.name,
-                    startAngle: startAngle,
-                    endAngle: endAngle
-                });
-
+                chartSegments.push({ name: segment.name, startAngle: startAngle, endAngle: endAngle });
                 startAngle = endAngle;
             });
 
@@ -688,23 +732,19 @@
             const rect = this.getBoundingClientRect();
             const x = event.clientX - rect.left;
             const y = event.clientY - rect.top;
-            
             const centerX = this.width / 2;
             const centerY = this.height / 2;
             const radius = Math.min(centerX, centerY) - 10;
-
             const dx = x - centerX;
             const dy = y - centerY;
             const distance = Math.sqrt(dx*dx + dy*dy);
 
             if (distance < radius && distance > radius * 0.6) {
                 let angle = Math.atan2(dy, dx);
-                
                 for (let seg of chartSegments) {
-                    let checkAngle = angle; 
-                    if (checkAngle >= seg.startAngle && checkAngle < seg.endAngle) {
-                         filterBySport(seg.name);
-                         return;
+                    if (angle >= seg.startAngle && angle < seg.endAngle) {
+                        filterBySport(seg.name);
+                        return;
                     }
                 }
             }
