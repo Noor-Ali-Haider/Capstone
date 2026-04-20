@@ -102,6 +102,12 @@
         .attendance-btn.absent.active { background: #ef4444; color: white; border-color: #ef4444; }
         .attendance-btn.late.active { background: #f59e0b; color: white; border-color: #f59e0b; }
         .attendance-btn.excused.active { background: #6b7280; color: white; border-color: #6b7280; }
+        
+        .attendance-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 12px 16px; background: #fff; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
@@ -110,6 +116,7 @@
         
         .form-control { border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 6px; padding: 8px 12px; font-size: 14px; }
         .form-control:focus { outline: none; border-color: var(--primary); background: white; }
+        .form-control:disabled { background: #f3f4f6; cursor: not-allowed; }
 
         .view-btn {
             background: var(--primary);
@@ -133,6 +140,14 @@
         .status-absent { background: #fee2e2; color: #991b1b; }
         .status-late { background: #fed7aa; color: #92400e; }
         .status-excused { background: #e5e7eb; color: #374151; }
+        
+        .btn-primary { background: var(--primary); color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .btn-success { background: #10b981; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-success:hover { opacity: 0.9; }
+        .btn-success:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -182,34 +197,19 @@
             </a>
 
             <div class="nav-section-title">Sports Teams</div>
-            <a href="attendance.html?team=Basketball" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Basketball</span>
-            </a>
-            <a href="attendance.html?team=Volleyball" class="nav-item sub-item">
-                <i class="bi bi-vinyl"></i>
-                <span>Volleyball</span>
-            </a>
-            <a href="attendance.html?team=Futsal" class="nav-item sub-item">
-                <i class="bi bi-futbol"></i>
-                <span>Futsal</span>
-            </a>
-            <a href="attendance.html?team=Football" class="nav-item sub-item">
-                <i class="bi bi-life-preserver"></i>
-                <span>Football</span>
-            </a>
-            <a href="attendance.html?team=Padel" class="nav-item sub-item">
-                <i class="bi bi-tennis"></i>
-                <span>Padel</span>
-            </a>
+            <a href="basketball.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Basketball</span></a>
+            <a href="volleyball.html" class="nav-item sub-item"><i class="bi bi-vinyl"></i><span>Volleyball</span></a>
+            <a href="futsal.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Futsal</span></a>
+            <a href="football.html" class="nav-item sub-item"><i class="bi bi-life-preserver"></i><span>Football</span></a>
+            <a href="padel.html" class="nav-item sub-item"><i class="bi bi-circle-fill"></i><span>Padel</span></a>
         </nav>
 
         <div class="border-t border-white/10 p-3 mt-auto">
-            <div class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item" onclick="logout()">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Logout</span>
             </div>
@@ -226,7 +226,11 @@
                 <p class="text-sm text-gray-500" id="selected-team-display">Football Team - Morning Training</p>
             </div>
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                    <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
+                </div>
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
             </div>
         </header>
 
@@ -286,13 +290,13 @@
                         <h3 class="font-bold text-gray-800" id="session-title">Morning Training - Football Team</h3>
                         <p class="text-xs text-gray-400 mt-1">Click on P/A/L/E buttons to mark attendance for each student</p>
                     </div>
-                    <button class="bg-green-600 text-white px-4 py-2 text-sm rounded-md font-semibold hover:opacity-90 transition" onclick="saveAttendance()">
+                    <button id="saveAttendanceBtn" class="bg-green-600 text-white px-4 py-2 text-sm rounded-md font-semibold hover:opacity-90 transition" onclick="saveAttendance()">
                         <i class="bi bi-check-lg mr-1"></i>
                         Save Attendance
                     </button>
                 </div>
                 <div class="overflow-x-auto">
-                    <table>
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th>Athlete</th>
@@ -316,7 +320,7 @@
                     <span class="text-xs text-gray-400">Click View to see attendance list</span>
                 </div>
                 <div class="overflow-x-auto">
-                    <table>
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th>Date</th>
@@ -352,8 +356,94 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
+        // ============================================
+        // ROLE-BASED ACCESS CONTROL FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function canEditAttendance() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) userNameElem.innerText = userName || 'User';
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        function disableAttendanceForStudents() {
+            if (!canEditAttendance()) {
+                // Disable all attendance buttons
+                const allButtons = document.querySelectorAll('.attendance-btn');
+                allButtons.forEach(btn => {
+                    btn.classList.add('disabled');
+                });
+                
+                // Disable notes inputs
+                const allNotes = document.querySelectorAll('.notes-input');
+                allNotes.forEach(input => {
+                    input.disabled = true;
+                });
+                
+                // Hide save button
+                const saveBtn = document.getElementById('saveAttendanceBtn');
+                if (saveBtn) saveBtn.style.display = 'none';
+            }
+        }
+
+        checkAuth();
+        updateHeaderWithUser();
+
         // ==========================================
         // DATABASE
         // ==========================================
@@ -368,10 +458,10 @@
                 { id: 7, name: "John Smith", team: "Football", year: "Junior" },
                 { id: 8, name: "Mike Johnson", team: "Football", year: "Sophomore" },
                 { id: 9, name: "Alex Brown", team: "Basketball", year: "Senior" },
-                { id: 10, name: "Emma Wilson", team: "Volleyball", year: "Sophomore" }
+                { id: 10, name: "Emma Wilson", team: "Volleyball", year: "Sophomore" },
+                { id: 11, name: "Student Athlete", team: "Basketball", year: "Sophomore" }
             ],
             attendance: [
-                // Sample saved records
                 { 
                     id: 1, 
                     date: "2026-10-05", 
@@ -422,16 +512,14 @@
         // UI STATE
         // ==========================================
         let currentRecords = [];
-        let selectedTeam = 'Football'; // Default to Football
+        let selectedTeam = 'Football';
 
         window.onload = function() {
             loadFromStorage();
             
-            // Set default date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('attendance-date').value = today;
             
-            // Check URL for team parameter
             const urlParams = new URLSearchParams(window.location.search);
             const teamParam = urlParams.get('team');
             if (teamParam) {
@@ -441,9 +529,9 @@
             
             loadAttendanceTable();
             loadSavedRecords();
+            disableAttendanceForStudents();
         };
 
-        // Filter by team (called from sidebar)
         function filterByTeam() {
             selectedTeam = document.getElementById('filter-team').value;
             document.getElementById('selected-team-display').innerText = 
@@ -451,55 +539,56 @@
             loadAttendanceTable();
         }
 
-        // Load athletes for attendance marking
         function loadAttendanceTable() {
             const team = document.getElementById('filter-team').value;
             const session = document.getElementById('filter-session').value;
             const date = document.getElementById('attendance-date').value;
             
-            // Update title
             document.getElementById('session-title').innerHTML = 
                 `${session} - ${team === 'All' ? 'All Teams' : team + ' Team'}`;
             document.getElementById('selected-team-display').innerText = 
                 team === 'All' ? 'All Teams' : team + ' Team - ' + session;
             
-            // Filter athletes by team
             let athletes = db.athletes;
             if (team !== 'All') {
                 athletes = athletes.filter(a => a.team === team);
             }
             
-            // Check if we have saved records for this date/session/team
             const savedSession = db.attendance.find(a => 
                 a.date === date && 
                 a.session === session && 
                 a.team === team
             );
             
-            // Create records for each athlete
             currentRecords = athletes.map(athlete => {
                 const saved = savedSession?.records.find(r => r.athleteId === athlete.id);
                 return {
                     athleteId: athlete.id,
                     athlete: athlete,
-                    status: saved ? saved.status : 'Present', // Default to Present
+                    status: saved ? saved.status : 'Present',
                     notes: saved ? saved.notes : ''
                 };
             });
             
             renderAttendanceTable();
             updateStats();
+            disableAttendanceForStudents();
         }
 
         function renderAttendanceTable() {
             const tbody = document.getElementById('attendance-table');
+            const canEdit = canEditAttendance();
             
             if(currentRecords.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">No athletes found for this team</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">No athletes found for this team</a></a></tr>`;
                 return;
             }
 
             tbody.innerHTML = currentRecords.map(record => {
+                const isCurrentUser = (record.athlete.name === getUserName());
+                const disabledAttr = !canEdit ? 'disabled' : '';
+                const btnDisabledClass = !canEdit ? 'disabled' : '';
+                
                 return `
                     <tr>
                         <td>
@@ -509,27 +598,28 @@
                                 </div>
                                 <span class="font-medium">${record.athlete.name}</span>
                             </div>
-                        </td>
-                        <td>${record.athlete.team}</td>
-                        <td>${record.athlete.year}</td>
+                         </a>
+                        <td>${record.athlete.team}</a>
+                        <td>${record.athlete.year}</a>
                         <td>
                             <div class="flex gap-1">
-                                <button class="attendance-btn present ${record.status === 'Present' ? 'active' : ''}" 
-                                    onclick="updateStatus(${record.athleteId}, 'Present')">P</button>
-                                <button class="attendance-btn absent ${record.status === 'Absent' ? 'active' : ''}" 
-                                    onclick="updateStatus(${record.athleteId}, 'Absent')">A</button>
-                                <button class="attendance-btn late ${record.status === 'Late' ? 'active' : ''}" 
-                                    onclick="updateStatus(${record.athleteId}, 'Late')">L</button>
-                                <button class="attendance-btn excused ${record.status === 'Excused' ? 'active' : ''}" 
-                                    onclick="updateStatus(${record.athleteId}, 'Excused')">E</button>
+                                <button class="attendance-btn present ${record.status === 'Present' ? 'active' : ''} ${btnDisabledClass}" 
+                                    onclick="canEdit && updateStatus(${record.athleteId}, 'Present')">P</button>
+                                <button class="attendance-btn absent ${record.status === 'Absent' ? 'active' : ''} ${btnDisabledClass}" 
+                                    onclick="canEdit && updateStatus(${record.athleteId}, 'Absent')">A</button>
+                                <button class="attendance-btn late ${record.status === 'Late' ? 'active' : ''} ${btnDisabledClass}" 
+                                    onclick="canEdit && updateStatus(${record.athleteId}, 'Late')">L</button>
+                                <button class="attendance-btn excused ${record.status === 'Excused' ? 'active' : ''} ${btnDisabledClass}" 
+                                    onclick="canEdit && updateStatus(${record.athleteId}, 'Excused')">E</button>
                             </div>
-                        </td>
+                         </a>
                         <td>
-                            <input type="text" class="form-control text-sm py-1 w-full" 
+                            <input type="text" class="form-control text-sm py-1 w-full notes-input" 
                                 placeholder="Add notes..." 
                                 value="${record.notes}" 
-                                onchange="updateNotes(${record.athleteId}, this.value)">
-                        </td>
+                                onchange="canEdit && updateNotes(${record.athleteId}, this.value)"
+                                ${disabledAttr}>
+                         </a>
                     </tr>
                 `;
             }).join('');
@@ -547,6 +637,7 @@
         }
 
         function updateStatus(athleteId, status) {
+            if (!canEditAttendance()) return;
             const record = currentRecords.find(r => r.athleteId === athleteId);
             if (record) {
                 record.status = status;
@@ -556,6 +647,7 @@
         }
 
         function updateNotes(athleteId, notes) {
+            if (!canEditAttendance()) return;
             const record = currentRecords.find(r => r.athleteId === athleteId);
             if (record) {
                 record.notes = notes;
@@ -563,11 +655,15 @@
         }
 
         function saveAttendance() {
+            if (!canEditAttendance()) {
+                alert("Access Denied: You don't have permission to save attendance.");
+                return;
+            }
+            
             const date = document.getElementById('attendance-date').value;
             const session = document.getElementById('filter-session').value;
             const team = document.getElementById('filter-team').value;
             
-            // Check if session already exists
             const existingIndex = db.attendance.findIndex(a => 
                 a.date === date && a.session === session && a.team === team
             );
@@ -585,28 +681,22 @@
             };
             
             if (existingIndex !== -1) {
-                // Update existing record
                 db.attendance[existingIndex] = newRecord;
             } else {
-                // Add new record
                 db.attendance.push(newRecord);
             }
             
             saveToStorage();
             loadSavedRecords();
-            
-            // Show success message
             alert(`Attendance saved for ${team === 'All' ? 'All Teams' : team} - ${session} on ${date}`);
         }
 
         function loadSavedRecords() {
             const tbody = document.getElementById('saved-records-table');
-            
-            // Sort by date (most recent first)
             const sorted = [...db.attendance].sort((a, b) => new Date(b.date) - new Date(a.date));
             
             if(sorted.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-400">No saved attendance records</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-gray-400">No saved attendance records</a></tr>`;
                 return;
             }
             
@@ -617,17 +707,17 @@
                 
                 return `
                     <tr>
-                        <td>${record.date}</td>
-                        <td>${record.session}</td>
-                        <td>${record.team}</td>
-                        <td><span class="status-badge status-present">${present}</span></td>
-                        <td><span class="status-badge status-absent">${absent}</span></td>
-                        <td><span class="status-badge status-late">${late}</span></td>
+                        <td>${record.date}</a>
+                        <td>${record.session}</a>
+                        <td>${record.team}</a>
+                        <td><span class="status-badge status-present">${present}</span></a>
+                        <td><span class="status-badge status-absent">${absent}</span></a>
+                        <td><span class="status-badge status-late">${late}</span></a>
                         <td>
                             <button class="view-btn" onclick="viewAttendance(${record.id})">
                                 <i class="bi bi-eye"></i> View
                             </button>
-                        </td>
+                         </a>
                     </tr>
                 `;
             }).join('');
@@ -643,7 +733,6 @@
             
             modalTitle.innerText = `${record.team} - ${record.session} (${record.date})`;
             
-            // Get athlete details for each record
             const details = record.records.map(r => {
                 const athlete = db.athletes.find(a => a.id === r.athleteId);
                 let statusClass = 'status-present';
@@ -653,10 +742,10 @@
                 
                 return `
                     <tr>
-                        <td>${athlete ? athlete.name : 'Unknown'}</td>
-                        <td>${athlete ? athlete.year : ''}</td>
-                        <td><span class="status-badge ${statusClass}">${r.status}</span></td>
-                        <td>${r.notes || '-'}</td>
+                        <td>${athlete ? athlete.name : 'Unknown'}</a>
+                        <td>${athlete ? athlete.year : ''}</a>
+                        <td><span class="status-badge ${statusClass}">${r.status}</span></a>
+                        <td>${r.notes || '-'}</a>
                     </tr>
                 `;
             }).join('');
@@ -664,16 +753,9 @@
             modalContent.innerHTML = `
                 <table class="w-full">
                     <thead>
-                        <tr>
-                            <th>Athlete</th>
-                            <th>Year</th>
-                            <th>Status</th>
-                            <th>Notes</th>
-                        </tr>
+                        <tr><th>Athlete</th><th>Year</th><th>Status</th><th>Notes</th></tr>
                     </thead>
-                    <tbody>
-                        ${details}
-                    </tbody>
+                    <tbody>${details}</tbody>
                 </table>
             `;
             
@@ -687,7 +769,6 @@
             modal.classList.remove('flex');
         }
 
-        // Click outside modal to close
         window.onclick = function(event) {
             const modal = document.getElementById('viewModal');
             if (event.target === modal) {
