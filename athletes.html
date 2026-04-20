@@ -31,7 +31,6 @@
             color: #333;
         }
 
-        /* --- Layout --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -53,7 +52,6 @@
             background-color: var(--bg-main);
         }
 
-        /* --- Components --- */
         .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
         .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         .nav-menu { flex-grow: 1; padding: 1rem 0; }
@@ -62,7 +60,6 @@
         .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
         .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
 
-        /* Sports Team Section in Sidebar */
         .nav-section-title {
             padding: 1.5rem 20px 0.5rem 20px;
             font-size: 11px;
@@ -89,7 +86,6 @@
             z-index: 100;
         }
 
-        /* --- Page Specific --- */
         .filter-bar {
             background: white;
             padding: 1rem 1.5rem;
@@ -144,12 +140,6 @@
         .tag-soccer { background: #e6f4ea; color: #1e8e3e; }
         .tag-football { background: #e8f0fe; color: #1a73e8; }
 
-        .pagination { display: flex; gap: 4px; margin-top: 1.5rem; justify-content: flex-end; }
-        .page-btn { padding: 6px 12px; border: 1px solid #e5e7eb; background: white; border-radius: 4px; cursor: pointer; font-size: 13px; }
-        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .page-btn:hover:not(.active) { background: #f3f4f6; }
-
-        /* Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5);
@@ -169,6 +159,11 @@
         .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
         .modal-body { padding: 1.5rem; }
         .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 0.5rem; }
+        
+        .btn-primary { background: var(--primary); color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; }
+        .btn-primary:hover { opacity: 0.9; }
+        .btn-secondary { background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; border: 1px solid #e5e7eb; cursor: pointer; }
+        .btn-secondary:hover { background: #e5e7eb; }
     </style>
 </head>
 <body>
@@ -188,73 +183,49 @@
                 <i class="bi bi-grid-1x2-fill"></i>
                 <span>Dashboard</span>
             </a>
-
             <a href="athletes.html" class="nav-item active">
                 <i class="bi bi-people-fill"></i>
                 <span>Athletes</span>
             </a>
-
             <a href="attendance.html" class="nav-item">
-        <i class="bi bi-calendar-check-fill"></i>
-        <span>Attendance</span>
-    </a>
-
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
             <a href="training.html" class="nav-item">
                 <i class="bi bi-calendar-check-fill"></i>
                 <span>Training & Sessions</span>
             </a>
-
             <a href="health.html" class="nav-item">
                 <i class="bi bi-heart-pulse-fill"></i>
                 <span>Health & Wellness</span>
             </a>
-
             <a href="checkin.html" class="nav-item">
                 <i class="bi bi-clipboard2-pulse-fill"></i>
                 <span>Wellness Check-In</span>
             </a>
-
             <a href="analytics.html" class="nav-item">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Analytics</span>
             </a>
-
             <a href="announcements.html" class="nav-item">
                 <i class="bi bi-megaphone-fill"></i>
                 <span>Announcements</span>
             </a>
 
-            <!-- SPORTS TEAMS SECTION -->
             <div class="nav-section-title">Sports Teams</div>
-            
-            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Basketball</span>
-            </a>
-            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
-                <i class="bi bi-vinyl"></i>
-                <span>Volleyball</span>
-            </a>
-            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Futsal</span>
-            </a>
-            <a href="athletes.html?sport=Football" class="nav-item sub-item">
-                <i class="bi bi-life-preserver"></i>
-                <span>Football</span>
-            </a>
-            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
-                <i class="bi bi-circle-fill"></i>
-                <span>Padel</span>
-            </a>
+            <a href="basketball.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Basketball</span></a>
+            <a href="volleyball.html" class="nav-item sub-item"><i class="bi bi-vinyl"></i><span>Volleyball</span></a>
+            <a href="futsal.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Futsal</span></a>
+            <a href="football.html" class="nav-item sub-item"><i class="bi bi-life-preserver"></i><span>Football</span></a>
+            <a href="padel.html" class="nav-item sub-item"><i class="bi bi-circle-fill"></i><span>Padel</span></a>
         </nav>
 
         <div class="border-t border-white/10 p-3 mt-auto">
-            <div class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item" onclick="logout()">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Logout</span>
             </div>
@@ -264,30 +235,29 @@
     <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         
-        <!-- Top Header -->
         <header class="top-header">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Athletes Management</h2>
             </div>
             
             <div class="flex items-center gap-4">
-                <!-- Profile -->
-                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                    <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
+                </div>
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
             </div>
         </header>
 
-        <!-- Page Content -->
         <div class="p-6 lg:p-8">
             
             <!-- Filter & Action Bar -->
             <div class="filter-bar justify-between">
                 <div class="flex flex-wrap gap-4 items-end">
-                    
                     <div class="filter-group">
                         <label>Search Name</label>
                         <input type="text" id="searchInput" placeholder="Type name..." class="form-control" onkeyup="applyFilters()">
                     </div>
-
                     <div class="filter-group">
                         <label>Sport</label>
                         <select id="sportFilter" class="form-control" onchange="applyFilters()">
@@ -301,7 +271,6 @@
                             <option value="Tennis">Tennis</option>
                         </select>
                     </div>
-
                     <div class="filter-group">
                         <label>Status</label>
                         <select id="statusFilter" class="form-control" onchange="applyFilters()">
@@ -311,10 +280,9 @@
                             <option value="Injured">Injured</option>
                         </select>
                     </div>
-
                 </div>
                 
-                <button class="bg-[#800020] text-white px-4 py-2 rounded-md font-semibold flex items-center gap-2 hover:opacity-90 transition" onclick="openModal()">
+                <button id="addAthleteBtn" class="bg-[#800020] text-white px-4 py-2 rounded-md font-semibold flex items-center gap-2 hover:opacity-90 transition" onclick="openModal()">
                     <i class="bi bi-plus-lg"></i>
                     Add Athlete
                 </button>
@@ -323,13 +291,13 @@
             <!-- Table Section -->
             <div class="card-box">
                 <div class="overflow-x-auto">
-                    <table>
+                    <table class="w-full">
                         <thead>
                             <tr>
                                 <th>Name</th>
                                 <th>Sport</th>
                                 <th>Year</th>
-                                <th>GPA</th>
+                                <th id="gpaHeader">GPA</th>
                                 <th>Games</th>
                                 <th>Status</th>
                             </tr>
@@ -339,14 +307,6 @@
                     </table>
                 </div>
             </div>
-
-            <!-- Pagination -->
-            <div class="pagination">
-                <button class="page-btn">Previous</button>
-                <button class="page-btn active">1</button>
-                <button class="page-btn">Next</button>
-            </div>
-
         </div>
     </div>
 
@@ -360,12 +320,12 @@
             <div class="modal-body space-y-4">
                 <div>
                     <label class="block text-sm font-medium mb-1">Full Name</label>
-                    <input type="text" class="form-control w-full" placeholder="e.g. John Doe">
+                    <input type="text" id="newAthleteName" class="form-control w-full" placeholder="e.g. John Doe">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium mb-1">Sport</label>
-                        <select class="form-control w-full">
+                        <select id="newAthleteSport" class="form-control w-full">
                             <option>Basketball</option>
                             <option>Volleyball</option>
                             <option>Football</option>
@@ -375,7 +335,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium mb-1">Year</label>
-                        <select class="form-control w-full">
+                        <select id="newAthleteYear" class="form-control w-full">
                             <option>Freshman</option>
                             <option>Sophomore</option>
                             <option>Junior</option>
@@ -385,37 +345,129 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">Initial GPA</label>
-                    <input type="number" class="form-control w-full" placeholder="e.g. 3.50" step="0.01">
+                    <input type="number" id="newAthleteGpa" class="form-control w-full" placeholder="e.g. 3.50" step="0.01">
                 </div>
             </div>
             <div class="modal-footer">
-                <button onclick="closeModal()" class="px-4 py-2 border rounded-md text-gray-600 hover:bg-gray-50">Cancel</button>
-                <button onclick="saveAthlete()" class="px-4 py-2 bg-[#800020] text-white rounded-md hover:opacity-90">Save Athlete</button>
+                <button onclick="closeModal()" class="btn-secondary">Cancel</button>
+                <button onclick="saveAthlete()" class="btn-primary">Save Athlete</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
-        // Mock Data
-        const athletesData = [
+        // ============================================
+        // ROLE-BASED ACCESS CONTROL FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function canViewAllGPA() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
+        function canManagePlayers() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach';
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) userNameElem.innerText = userName || 'User';
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        function hideGpaHeaderForStudents() {
+            if (isStudent()) {
+                const gpaHeader = document.getElementById('gpaHeader');
+                if (gpaHeader) {
+                    gpaHeader.style.display = 'none';
+                }
+            }
+        }
+
+        function hideAddButtonForStudents() {
+            if (isStudent()) {
+                const addBtn = document.getElementById('addAthleteBtn');
+                if (addBtn) {
+                    addBtn.style.display = 'none';
+                }
+            }
+        }
+
+        checkAuth();
+        updateHeaderWithUser();
+        hideGpaHeaderForStudents();
+        hideAddButtonForStudents();
+
+        // ==========================================
+        // MOCK DATA
+        // ==========================================
+        let athletesData = [
             { id: 1, name: "Sarah Johnson", sport: "Basketball", year: "Junior", gpa: 3.70, games: 18, status: "Healthy" },
             { id: 2, name: "James Williams", sport: "Soccer", year: "Freshman", gpa: 3.20, games: 8, status: "Healthy" },
             { id: 3, name: "David Martinez", sport: "Futsal", year: "Sophomore", gpa: 3.40, games: 16, status: "Recovering" },
             { id: 4, name: "Marcus Davis", sport: "Football", year: "Senior", gpa: 3.45, games: 22, status: "Injured" },
             { id: 5, name: "Lisa Thompson", sport: "Padel", year: "Junior", gpa: 3.60, games: 14, status: "Healthy" },
-            { id: 6, name: "Mia Anderson", sport: "Volleyball", year: "Freshman", gpa: 3.80, games: 12, status: "Healthy" }
+            { id: 6, name: "Mia Anderson", sport: "Volleyball", year: "Freshman", gpa: 3.80, games: 12, status: "Healthy" },
+            { id: 7, name: "Student Athlete", sport: "Basketball", year: "Sophomore", gpa: 3.50, games: 10, status: "Healthy" }
         ];
 
         window.onload = function() {
-            // Check URL parameters on load to see if a specific sport was clicked from sidebar
             const urlParams = new URLSearchParams(window.location.search);
             const sportParam = urlParams.get('sport');
             
             if (sportParam) {
                 document.getElementById('sportFilter').value = sportParam;
             }
-            
             applyFilters(); 
         };
 
@@ -438,6 +490,11 @@
             const tbody = document.getElementById('athletesTable');
             tbody.innerHTML = '';
 
+            const userRole = getUserRole();
+            const userName = getUserName();
+            const isStudentUser = (userRole === 'student');
+            const canViewAllGpa = (userRole === 'admin' || userRole === 'coach' || userRole === 'assistant_coach');
+
             if(data.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-gray-400">No athletes found matching criteria.</td></tr>`;
                 return;
@@ -452,22 +509,32 @@
                 if(athlete.status === 'Recovering') statusClass = 'status-recovering';
                 if(athlete.status === 'Injured') statusClass = 'status-injured';
 
+                // GPA visibility logic
+                let showGpa = false;
+                if (canViewAllGpa) {
+                    showGpa = true;
+                } else if (isStudentUser && athlete.name === userName) {
+                    showGpa = true;
+                }
+                
+                let gpaDisplay = showGpa ? athlete.gpa.toFixed(2) : '---';
+                let gpaClass = showGpa ? 'font-semibold' : 'text-gray-400 italic';
+
                 const row = `
-                    <tr>
+                    <tr onclick="window.location.href='profile.html?id=${athlete.id}'" style="cursor:pointer">
                         <td>
                             <div class="flex items-center gap-3">
                                 <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500 border border-gray-200">
                                     ${athlete.name.split(' ').map(n => n[0]).join('')}
                                 </div>
-                                <!-- CLICKABLE NAME LINK -->
-                                <a href="profile.html?id=${athlete.id}" class="font-medium text-gray-800 hover:text-[#800020] hover:underline">
+                                <a href="profile.html?id=${athlete.id}" class="font-medium text-gray-800 hover:text-[#800020] hover:underline" onclick="event.stopPropagation()">
                                     ${athlete.name}
                                 </a>
                             </div>
                         </td>
                         <td><span class="tag ${sportClass}">${athlete.sport}</span></td>
                         <td class="text-gray-500">${athlete.year}</td>
-                        <td class="font-semibold">${athlete.gpa.toFixed(2)}</td>
+                        <td class="${gpaClass}">${gpaDisplay}</td>
                         <td>${athlete.games}</td>
                         <td><span class="status-badge ${statusClass}">${athlete.status}</span></td>
                     </tr>
@@ -477,6 +544,14 @@
         }
 
         function openModal() {
+            if (!canManagePlayers()) {
+                alert("Access Denied: You don't have permission to add athletes.");
+                return;
+            }
+            document.getElementById('newAthleteName').value = '';
+            document.getElementById('newAthleteSport').value = 'Basketball';
+            document.getElementById('newAthleteYear').value = 'Freshman';
+            document.getElementById('newAthleteGpa').value = '';
             document.getElementById('addAthleteModal').classList.add('show');
         }
 
@@ -485,8 +560,41 @@
         }
 
         function saveAthlete() {
-            alert("Athlete Saved! (Front-end demo only)");
+            if (!canManagePlayers()) {
+                alert("Access Denied: You don't have permission to add athletes.");
+                closeModal();
+                return;
+            }
+            
+            const name = document.getElementById('newAthleteName').value.trim();
+            const sport = document.getElementById('newAthleteSport').value;
+            const year = document.getElementById('newAthleteYear').value;
+            const gpa = parseFloat(document.getElementById('newAthleteGpa').value);
+            
+            if (!name) {
+                alert("Please enter athlete name");
+                return;
+            }
+            if (isNaN(gpa) || gpa < 0 || gpa > 4) {
+                alert("Please enter a valid GPA (0.0 - 4.0)");
+                return;
+            }
+            
+            const newId = athletesData.length + 1;
+            const newAthlete = {
+                id: newId,
+                name: name,
+                sport: sport,
+                year: year,
+                gpa: gpa,
+                games: 0,
+                status: "Healthy"
+            };
+            
+            athletesData.push(newAthlete);
+            applyFilters();
             closeModal();
+            alert(`Athlete "${name}" added successfully!`);
         }
     </script>
 </body>
