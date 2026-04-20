@@ -16,7 +16,7 @@
 
     <style>
         :root {
-            --primary: #800020;       /* Burgundy */
+            --primary: #800020;
             --primary-dark: #5c0017;
             --accent: #bfa15e;
             --bg-main: #f4f6f9;
@@ -31,7 +31,6 @@
             color: #333;
         }
 
-        /* --- Layout --- */
         .sidebar {
             position: fixed;
             top: 0;
@@ -53,7 +52,6 @@
             background-color: var(--bg-main);
         }
 
-        /* --- Components --- */
         .brand-area { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; gap: 12px; }
         .brand-icon { width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
         .nav-menu { flex-grow: 1; padding: 1rem 0; }
@@ -62,7 +60,6 @@
         .nav-item:hover { background: rgba(0,0,0,0.1); color: #fff; }
         .nav-item.active { background: rgba(0,0,0,0.15); color: #fff; border-left-color: var(--accent); font-weight: 600; }
 
-        /* Sports Team Section */
         .nav-section-title { padding: 1.5rem 20px 0.5rem 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); letter-spacing: 0.5px; }
         .nav-item.sub-item { padding: 10px 20px 10px 24px; font-size: 0.9rem; }
 
@@ -79,7 +76,6 @@
             z-index: 100;
         }
 
-        /* --- Page Specific --- */
         .card-box { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); overflow: hidden; max-width: 800px; margin: 0 auto; }
         .card-header { padding: 1.5rem; border-bottom: 1px solid #f0f0f0; background: #fafafa; text-align: center; }
         
@@ -90,7 +86,6 @@
         .btn-primary:hover { opacity: 0.9; }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Slider Styles */
         .slider-container { position: relative; width: 100%; }
         .slider-labels { display: flex; justify-content: space-between; font-size: 12px; color: #666; margin-bottom: 8px; }
         
@@ -119,7 +114,7 @@
 </head>
 <body>
 
-    <!-- SIDEBAR (Identical to Dashboard/Athletes) -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="brand-area">
             <div class="brand-icon"><i class="bi bi-shield-fill-check"></i></div>
@@ -134,73 +129,49 @@
                 <i class="bi bi-grid-1x2-fill"></i>
                 <span>Dashboard</span>
             </a>
-
             <a href="athletes.html" class="nav-item">
                 <i class="bi bi-people-fill"></i>
                 <span>Athletes</span>
             </a>
-
             <a href="attendance.html" class="nav-item">
-        <i class="bi bi-calendar-check-fill"></i>
-        <span>Attendance</span>
-    </a>
-
+                <i class="bi bi-calendar-check-fill"></i>
+                <span>Attendance</span>
+            </a>
             <a href="training.html" class="nav-item">
                 <i class="bi bi-calendar-check-fill"></i>
                 <span>Training & Sessions</span>
             </a>
-
             <a href="health.html" class="nav-item">
                 <i class="bi bi-heart-pulse-fill"></i>
                 <span>Health & Wellness</span>
             </a>
-
             <a href="checkin.html" class="nav-item active">
                 <i class="bi bi-clipboard2-pulse-fill"></i>
                 <span>Wellness Check-In</span>
             </a>
-
             <a href="analytics.html" class="nav-item">
                 <i class="bi bi-bar-chart-fill"></i>
                 <span>Analytics</span>
             </a>
-
             <a href="announcements.html" class="nav-item">
                 <i class="bi bi-megaphone-fill"></i>
                 <span>Announcements</span>
             </a>
 
-            <!-- SPORTS TEAMS SECTION -->
             <div class="nav-section-title">Sports Teams</div>
-            
-            <a href="athletes.html?sport=Basketball" class="nav-item sub-item">
-                <i class="bi bi-dribbble"></i>
-                <span>Basketball</span>
-            </a>
-            <a href="athletes.html?sport=Volleyball" class="nav-item sub-item">
-                <i class="bi bi-vinyl"></i>
-                <span>Volleyball</span>
-            </a>
-            <a href="athletes.html?sport=Futsal" class="nav-item sub-item">
-                <i class="bi bi-futbol"></i>
-                <span>Futsal</span>
-            </a>
-            <a href="athletes.html?sport=Football" class="nav-item sub-item">
-                <i class="bi bi-life-preserver"></i>
-                <span>Football</span>
-            </a>
-            <a href="athletes.html?sport=Padel" class="nav-item sub-item">
-                <i class="bi bi-tennis"></i>
-                <span>Padel</span>
-            </a>
+            <a href="basketball.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Basketball</span></a>
+            <a href="volleyball.html" class="nav-item sub-item"><i class="bi bi-vinyl"></i><span>Volleyball</span></a>
+            <a href="futsal.html" class="nav-item sub-item"><i class="bi bi-dribbble"></i><span>Futsal</span></a>
+            <a href="football.html" class="nav-item sub-item"><i class="bi bi-life-preserver"></i><span>Football</span></a>
+            <a href="padel.html" class="nav-item sub-item"><i class="bi bi-circle-fill"></i><span>Padel</span></a>
         </nav>
 
         <div class="border-t border-white/10 p-3 mt-auto">
-            <div class="nav-item">
+            <a href="settings.html" class="nav-item">
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item" onclick="logout()">
                 <i class="bi bi-box-arrow-left"></i>
                 <span>Logout</span>
             </div>
@@ -210,7 +181,6 @@
     <!-- MAIN CONTENT -->
     <div class="main-wrapper">
         
-        <!-- Top Header -->
         <header class="top-header">
             <div>
                 <h2 class="text-xl font-bold text-gray-800">Wellness Check-In</h2>
@@ -218,22 +188,25 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold">AD</div>
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold" id="headerUserName">Loading...</p>
+                    <p class="text-xs text-gray-400" id="headerUserRole">Loading...</p>
+                </div>
+                <div class="w-10 h-10 bg-[#800020] rounded-full text-white flex items-center justify-center font-bold" id="headerUserInitials">AU</div>
             </div>
         </header>
 
-        <!-- Page Content -->
         <div class="p-6 lg:p-8">
             
             <div class="card-box">
                 <div class="card-header">
                     <i class="bi bi-clipboard2-pulse text-4xl text-[#800020] mb-2"></i>
                     <h3 class="text-lg font-bold text-gray-800">Daily Check-In Form</h3>
-                    <p class="text-sm text-gray-500 mt-1">Select an athlete to begin</p>
+                    <p class="text-sm text-gray-500 mt-1">Select yourself to begin</p>
                 </div>
                 
                 <div class="p-6">
-                    <!-- Step 1: Select Athlete -->
+                    <!-- Step 1: Select Athlete (Only shows their own name for students) -->
                     <div class="mb-6">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Select Athlete</label>
                         <select id="athleteSelect" class="form-control" onchange="loadAthleteData()">
@@ -322,39 +295,140 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script>
-        // ==========================================
-        // 1. MOCK DATABASE (Replace with Database Connection later)
-        // ==========================================
-        const mockDB = {
-            athletes: [
-                { id: 1, name: "Sarah Johnson", sport: "Basketball" },
-                { id: 2, name: "James Williams", sport: "Soccer" },
-                { id: 3, name: "Marcus Davis", sport: "Football" },
-                { id: 4, name: "Lisa Thompson", sport: "Tennis" }
-            ],
-            checkIns: []
-        };
+        // ============================================
+        // ROLE-BASED ACCESS CONTROL FUNCTIONS
+        // ============================================
+
+        function getUserRole() {
+            return localStorage.getItem('userRole');
+        }
+
+        function getUserName() {
+            return localStorage.getItem('userName');
+        }
+
+        function isStudent() {
+            return getUserRole() === 'student';
+        }
+
+        function canSubmitWellness() {
+            // Only students can submit wellness check-ins (for themselves)
+            const role = getUserRole();
+            return role === 'student';
+        }
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userRole');
+            localStorage.removeItem('userName');
+            window.location.href = 'index.html';
+        }
+
+        function updateHeaderWithUser() {
+            const userName = getUserName();
+            const userRole = getUserRole();
+            
+            const userNameElem = document.getElementById('headerUserName');
+            const userRoleElem = document.getElementById('headerUserRole');
+            const userInitialsElem = document.getElementById('headerUserInitials');
+            
+            if (userNameElem) userNameElem.innerText = userName || 'User';
+            if (userRoleElem) {
+                let roleText = 'Student-Athlete';
+                if (userRole === 'admin') roleText = 'System Administrator';
+                else if (userRole === 'coach') roleText = 'Head Coach';
+                else if (userRole === 'assistant_coach') roleText = 'Assistant Coach';
+                userRoleElem.innerText = roleText;
+            }
+            if (userInitialsElem && userName) {
+                const nameParts = userName.split(' ');
+                let initials = '';
+                if (nameParts.length >= 2) {
+                    initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
+                } else {
+                    initials = userName.charAt(0);
+                }
+                userInitialsElem.innerText = initials.toUpperCase();
+            }
+        }
+
+        checkAuth();
+        updateHeaderWithUser();
 
         // ==========================================
-        // 2. API SERVICE LAYER (Connects Frontend to Backend)
+        // 1. MOCK DATABASE
+        // ==========================================
+        let athletesData = [
+            { id: 1, name: "Sarah Johnson", sport: "Basketball" },
+            { id: 2, name: "James Williams", sport: "Soccer" },
+            { id: 3, name: "Marcus Davis", sport: "Football" },
+            { id: 4, name: "Lisa Thompson", sport: "Tennis" },
+            { id: 5, name: "Student Athlete", sport: "Basketball" }
+        ];
+
+        let checkInsData = [];
+
+        // Load from localStorage
+        function loadFromStorage() {
+            const savedCheckIns = localStorage.getItem('checkinsDB');
+            if (savedCheckIns) {
+                try {
+                    checkInsData = JSON.parse(savedCheckIns);
+                } catch (e) { console.error("Error loading check-ins"); }
+            }
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            localStorage.setItem('checkinsDB', JSON.stringify(checkInsData));
+        }
+
+        loadFromStorage();
+
+        // ==========================================
+        // 2. API SERVICE LAYER
         // ==========================================
         
         const api = {
             getActiveAthletes: async () => {
-                // TODO: Replace with real API Call
-                // return await fetch('/api/athletes/active').then(res => res.json());
-                console.log("API CALL: Fetching active athletes...");
-                return mockDB.athletes;
+                const userRole = getUserRole();
+                const userName = getUserName();
+                
+                // Students can only see themselves
+                if (userRole === 'student') {
+                    const selfAthlete = athletesData.filter(a => a.name === userName);
+                    return selfAthlete;
+                }
+                
+                // Coaches and admins see all athletes
+                return athletesData;
             },
 
             submitWellnessCheckIn: async (data) => {
-                // TODO: Replace with real API Call
-                // return await fetch('/api/wellness', { method: 'POST', body: JSON.stringify(data) });
+                // Only students can submit wellness check-ins
+                if (!canSubmitWellness()) {
+                    return { success: false, message: "Access Denied. Only athletes can submit wellness check-ins." };
+                }
+                
                 console.log("API CALL: Submitting check-in...", data);
                 
-                mockDB.checkIns.push(data);
+                const newCheckIn = {
+                    id: checkInsData.length + 1,
+                    ...data,
+                    timestamp: new Date().toISOString()
+                };
+                
+                checkInsData.push(newCheckIn);
+                saveToStorage();
                 return { success: true, message: "Check-in recorded" };
             }
         };
@@ -373,12 +447,21 @@
             const athletes = await api.getActiveAthletes();
             const select = document.getElementById('athleteSelect');
             
+            // Clear existing options
+            select.innerHTML = '<option value="">-- Select Athlete --</option>';
+            
             athletes.forEach(athlete => {
                 const option = document.createElement('option');
                 option.value = athlete.id;
                 option.textContent = `${athlete.name} (${athlete.sport})`;
                 select.appendChild(option);
             });
+            
+            // If only one athlete (student case), auto-select them
+            if (athletes.length === 1) {
+                select.value = athletes[0].id;
+                loadAthleteData();
+            }
         }
 
         function loadAthleteData() {
@@ -439,8 +522,15 @@
         }
 
         async function submitCheckIn() {
+            // Check permission
+            if (!canSubmitWellness()) {
+                alert("Access Denied: Only student-athletes can submit wellness check-ins.");
+                return;
+            }
+            
             const data = {
-                athleteId: selectedAthleteId,
+                athleteId: parseInt(selectedAthleteId),
+                athleteName: document.getElementById('athleteSelect').options[document.getElementById('athleteSelect').selectedIndex]?.text.split('(')[0].trim(),
                 date: new Date().toISOString().split('T')[0],
                 sleep: document.getElementById('sleepQuality').value,
                 stress: document.getElementById('stressLevel').value,
@@ -454,13 +544,19 @@
             if(result.success) {
                 document.getElementById('checkInForm').classList.add('hidden');
                 document.getElementById('successMessage').style.display = 'block';
-                document.getElementById('athleteSelect').value = ''; // Reset select
+                document.getElementById('athleteSelect').value = '';
                 selectedAthleteId = null;
                 
-                // Hide success message after 3 seconds
+                // If student, reload athletes to show only themselves
+                if (isStudent()) {
+                    loadAthletes();
+                }
+                
                 setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
                 }, 3000);
+            } else {
+                alert(result.message);
             }
         }
     </script>
