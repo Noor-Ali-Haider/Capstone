@@ -110,6 +110,20 @@
         }
         
         .check-in-summary { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 1rem; border-radius: 6px; margin-top: 1rem; display: none; }
+        
+        .access-denied-card {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .access-denied-card i { font-size: 3rem; color: #c81e1e; margin-bottom: 1rem; }
+        .access-denied-card h3 { font-size: 1.25rem; font-weight: bold; color: #c81e1e; margin-bottom: 0.5rem; }
+        .access-denied-card p { color: #666; margin-bottom: 1rem; }
+        .access-denied-card .btn-view { background: #800020; color: white; padding: 8px 20px; border-radius: 6px; text-decoration: none; display: inline-block; }
     </style>
 </head>
 <body>
@@ -198,98 +212,101 @@
 
         <div class="p-6 lg:p-8">
             
-            <div class="card-box">
-                <div class="card-header">
-                    <i class="bi bi-clipboard2-pulse text-4xl text-[#800020] mb-2"></i>
-                    <h3 class="text-lg font-bold text-gray-800">Daily Check-In Form</h3>
-                    <p class="text-sm text-gray-500 mt-1">Select yourself to begin</p>
-                </div>
-                
-                <div class="p-6">
-                    <!-- Step 1: Select Athlete (Only shows their own name for students) -->
-                    <div class="mb-6">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Select Athlete</label>
-                        <select id="athleteSelect" class="form-control" onchange="loadAthleteData()">
-                            <option value="">-- Select Athlete --</option>
-                            <!-- Options injected via JS -->
-                        </select>
-                    </div>
-
-                    <!-- Step 2: Check-In Form (Initially Hidden) -->
-                    <div id="checkInForm" class="hidden space-y-6">
-                        
-                        <!-- Sleep Quality -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Sleep Quality
-                                <span class="text-xs text-gray-400 float-right" id="sleepVal">5 - Average</span>
-                            </label>
-                            <input type="range" min="1" max="10" value="5" class="slider" id="sleepQuality" oninput="updateSliderLabel('sleep')">
-                            <div class="slider-labels">
-                                <span>Very Poor</span>
-                                <span>Excellent</span>
-                            </div>
-                        </div>
-
-                        <!-- Stress Level -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Stress Level
-                                <span class="text-xs text-gray-400 float-right" id="stressVal">5 - Moderate</span>
-                            </label>
-                            <input type="range" min="1" max="10" value="5" class="slider" id="stressLevel" oninput="updateSliderLabel('stress')">
-                            <div class="slider-labels">
-                                <span>Very Stressed</span>
-                                <span>Very Relaxed</span>
-                            </div>
-                        </div>
-
-                        <!-- Muscle Soreness -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Muscle Soreness
-                                <span class="text-xs text-gray-400 float-right" id="sorenessVal">5 - Moderate</span>
-                            </label>
-                            <input type="range" min="1" max="10" value="5" class="slider" id="soreness" oninput="updateSliderLabel('soreness')">
-                            <div class="slider-labels">
-                                <span>Very Sore</span>
-                                <span>No Soreness</span>
-                            </div>
-                        </div>
-
-                        <!-- Hydration -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Hydration Status</label>
-                            <select id="hydration" class="form-control">
-                                <option value="good">Well Hydrated (Clear Urine)</option>
-                                <option value="moderate">Moderately Hydrated</option>
-                                <option value="poor">Dehydrated (Dark Urine)</option>
-                            </select>
-                        </div>
-
-                        <!-- Notes -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
-                            <textarea id="notes" class="form-control" rows="2" placeholder="Any injuries, illness, or personal issues?"></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button class="btn-primary mt-4" onclick="submitCheckIn()">
-                            Submit Check-In
-                        </button>
+            <!-- Student View - Check-In Form -->
+            <div id="studentView">
+                <div class="card-box">
+                    <div class="card-header">
+                        <i class="bi bi-clipboard2-pulse text-4xl text-[#800020] mb-2"></i>
+                        <h3 class="text-lg font-bold text-gray-800">Daily Check-In Form</h3>
+                        <p class="text-sm text-gray-500 mt-1">Submit your daily wellness report</p>
                     </div>
                     
-                    <!-- Success Message -->
-                    <div id="successMessage" class="check-in-summary">
-                        <div class="flex items-center gap-3">
-                            <i class="bi bi-check-circle-fill text-green-600 text-2xl"></i>
+                    <div class="p-6">
+                        <!-- Check-In Form -->
+                        <div id="checkInForm" class="space-y-6">
+                            
+                            <!-- Sleep Quality -->
                             <div>
-                                <h4 class="font-bold text-green-800">Check-In Submitted!</h4>
-                                <p class="text-sm text-green-600">Data has been recorded successfully.</p>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Sleep Quality
+                                    <span class="text-xs text-gray-400 float-right" id="sleepVal">5 - Average</span>
+                                </label>
+                                <input type="range" min="1" max="10" value="5" class="slider" id="sleepQuality" oninput="updateSliderLabel('sleep')">
+                                <div class="slider-labels">
+                                    <span>Very Poor</span>
+                                    <span>Excellent</span>
+                                </div>
+                            </div>
+
+                            <!-- Stress Level -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Stress Level
+                                    <span class="text-xs text-gray-400 float-right" id="stressVal">5 - Moderate</span>
+                                </label>
+                                <input type="range" min="1" max="10" value="5" class="slider" id="stressLevel" oninput="updateSliderLabel('stress')">
+                                <div class="slider-labels">
+                                    <span>Very Stressed</span>
+                                    <span>Very Relaxed</span>
+                                </div>
+                            </div>
+
+                            <!-- Muscle Soreness -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Muscle Soreness
+                                    <span class="text-xs text-gray-400 float-right" id="sorenessVal">5 - Moderate</span>
+                                </label>
+                                <input type="range" min="1" max="10" value="5" class="slider" id="soreness" oninput="updateSliderLabel('soreness')">
+                                <div class="slider-labels">
+                                    <span>Very Sore</span>
+                                    <span>No Soreness</span>
+                                </div>
+                            </div>
+
+                            <!-- Hydration -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Hydration Status</label>
+                                <select id="hydration" class="form-control">
+                                    <option value="good">Well Hydrated (Clear Urine)</option>
+                                    <option value="moderate">Moderately Hydrated</option>
+                                    <option value="poor">Dehydrated (Dark Urine)</option>
+                                </select>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                                <textarea id="notes" class="form-control" rows="2" placeholder="Any injuries, illness, or personal issues?"></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button class="btn-primary mt-4" onclick="submitCheckIn()">
+                                Submit Check-In
+                            </button>
+                        </div>
+                        
+                        <!-- Success Message -->
+                        <div id="successMessage" class="check-in-summary">
+                            <div class="flex items-center gap-3">
+                                <i class="bi bi-check-circle-fill text-green-600 text-2xl"></i>
+                                <div>
+                                    <h4 class="font-bold text-green-800">Check-In Submitted!</h4>
+                                    <p class="text-sm text-green-600">Your wellness data has been recorded successfully.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Coach/Admin View - Access Denied Message -->
+            <div id="coachAdminView" class="access-denied-card" style="display: none;">
+                <i class="bi bi-shield-lock"></i>
+                <h3>Access Restricted</h3>
+                <p>Wellness check-ins can only be submitted by student-athletes themselves.</p>
+                <p class="text-sm">As a coach or administrator, you can view wellness data on the <strong>Health & Wellness</strong> page.</p>
+                <a href="health.html" class="btn-view">Go to Health & Wellness Page →</a>
             </div>
 
         </div>
@@ -310,12 +327,6 @@
 
         function isStudent() {
             return getUserRole() === 'student';
-        }
-
-        function canSubmitWellness() {
-            // Only students can submit wellness check-ins (for themselves)
-            const role = getUserRole();
-            return role === 'student';
         }
 
         function checkAuth() {
@@ -361,20 +372,26 @@
             }
         }
 
+        function showViewBasedOnRole() {
+            const studentView = document.getElementById('studentView');
+            const coachAdminView = document.getElementById('coachAdminView');
+            
+            if (isStudent()) {
+                studentView.style.display = 'block';
+                coachAdminView.style.display = 'none';
+            } else {
+                studentView.style.display = 'none';
+                coachAdminView.style.display = 'block';
+            }
+        }
+
         checkAuth();
         updateHeaderWithUser();
+        showViewBasedOnRole();
 
         // ==========================================
         // 1. MOCK DATABASE
         // ==========================================
-        let athletesData = [
-            { id: 1, name: "Sarah Johnson", sport: "Basketball" },
-            { id: 2, name: "James Williams", sport: "Soccer" },
-            { id: 3, name: "Marcus Davis", sport: "Football" },
-            { id: 4, name: "Lisa Thompson", sport: "Tennis" },
-            { id: 5, name: "Student Athlete", sport: "Basketball" }
-        ];
-
         let checkInsData = [];
 
         // Load from localStorage
@@ -399,24 +416,10 @@
         // ==========================================
         
         const api = {
-            getActiveAthletes: async () => {
-                const userRole = getUserRole();
-                const userName = getUserName();
-                
-                // Students can only see themselves
-                if (userRole === 'student') {
-                    const selfAthlete = athletesData.filter(a => a.name === userName);
-                    return selfAthlete;
-                }
-                
-                // Coaches and admins see all athletes
-                return athletesData;
-            },
-
             submitWellnessCheckIn: async (data) => {
                 // Only students can submit wellness check-ins
-                if (!canSubmitWellness()) {
-                    return { success: false, message: "Access Denied. Only athletes can submit wellness check-ins." };
+                if (!isStudent()) {
+                    return { success: false, message: "Access Denied. Only student-athletes can submit wellness check-ins." };
                 }
                 
                 console.log("API CALL: Submitting check-in...", data);
@@ -436,59 +439,6 @@
         // ==========================================
         // 3. UI LOGIC
         // ==========================================
-        
-        let selectedAthleteId = null;
-
-        window.onload = function() {
-            loadAthletes();
-        };
-
-        async function loadAthletes() {
-            const athletes = await api.getActiveAthletes();
-            const select = document.getElementById('athleteSelect');
-            
-            // Clear existing options
-            select.innerHTML = '<option value="">-- Select Athlete --</option>';
-            
-            athletes.forEach(athlete => {
-                const option = document.createElement('option');
-                option.value = athlete.id;
-                option.textContent = `${athlete.name} (${athlete.sport})`;
-                select.appendChild(option);
-            });
-            
-            // If only one athlete (student case), auto-select them
-            if (athletes.length === 1) {
-                select.value = athletes[0].id;
-                loadAthleteData();
-            }
-        }
-
-        function loadAthleteData() {
-            const select = document.getElementById('athleteSelect');
-            selectedAthleteId = select.value;
-            
-            const formDiv = document.getElementById('checkInForm');
-            const successDiv = document.getElementById('successMessage');
-
-            if (selectedAthleteId) {
-                formDiv.classList.remove('hidden');
-                successDiv.style.display = 'none';
-                
-                // Reset form fields
-                document.getElementById('sleepQuality').value = 5;
-                document.getElementById('stressLevel').value = 5;
-                document.getElementById('soreness').value = 5;
-                document.getElementById('hydration').value = 'good';
-                document.getElementById('notes').value = '';
-                updateSliderLabel('sleep');
-                updateSliderLabel('stress');
-                updateSliderLabel('soreness');
-
-            } else {
-                formDiv.classList.add('hidden');
-            }
-        }
 
         function updateSliderLabel(type) {
             if(type === 'sleep') {
@@ -523,14 +473,13 @@
 
         async function submitCheckIn() {
             // Check permission
-            if (!canSubmitWellness()) {
+            if (!isStudent()) {
                 alert("Access Denied: Only student-athletes can submit wellness check-ins.");
                 return;
             }
             
             const data = {
-                athleteId: parseInt(selectedAthleteId),
-                athleteName: document.getElementById('athleteSelect').options[document.getElementById('athleteSelect').selectedIndex]?.text.split('(')[0].trim(),
+                athleteName: getUserName(),
                 date: new Date().toISOString().split('T')[0],
                 sleep: document.getElementById('sleepQuality').value,
                 stress: document.getElementById('stressLevel').value,
@@ -542,15 +491,18 @@
             const result = await api.submitWellnessCheckIn(data);
 
             if(result.success) {
-                document.getElementById('checkInForm').classList.add('hidden');
-                document.getElementById('successMessage').style.display = 'block';
-                document.getElementById('athleteSelect').value = '';
-                selectedAthleteId = null;
+                // Reset form
+                document.getElementById('sleepQuality').value = 5;
+                document.getElementById('stressLevel').value = 5;
+                document.getElementById('soreness').value = 5;
+                document.getElementById('hydration').value = 'good';
+                document.getElementById('notes').value = '';
+                updateSliderLabel('sleep');
+                updateSliderLabel('stress');
+                updateSliderLabel('soreness');
                 
-                // If student, reload athletes to show only themselves
-                if (isStudent()) {
-                    loadAthletes();
-                }
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
                 
                 setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
