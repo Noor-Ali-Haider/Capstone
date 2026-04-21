@@ -96,6 +96,7 @@
         .tab-btn { padding: 10px 20px; font-weight: 600; color: #666; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; background: none; border-top: none; border-left: none; border-right: none; }
         .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
         .tab-btn:hover { color: var(--primary); }
+        .tab-btn.disabled { color: #ccc; cursor: not-allowed; pointer-events: none; }
 
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; padding: 12px 16px; background: #fff; color: #888; font-size: 12px; font-weight: 600; text-transform: uppercase; }
@@ -123,6 +124,19 @@
         
         .btn-secondary { background: #f3f4f6; color: #374151; padding: 8px 16px; border-radius: 6px; border: 1px solid #e5e7eb; cursor: pointer; }
         .btn-secondary:hover { background: #e5e7eb; }
+        
+        .info-banner {
+            background: #e8f0fe;
+            border-left: 4px solid #1a73e8;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #1a73e8;
+        }
     </style>
 </head>
 <body>
@@ -211,8 +225,8 @@
 
         <div class="p-6 lg:p-8">
             
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <!-- Stats Cards (Only for Coaches/Admins) -->
+            <div id="statsSection" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div class="stat-card border-l-4 border-red-500">
                     <h3 id="stat-active">0</h3>
                     <p>Active Injuries</p>
@@ -227,10 +241,16 @@
                 </div>
             </div>
 
+            <!-- Info Banner for Students -->
+            <div id="studentInfoBanner" class="info-banner" style="display: none;">
+                <i class="bi bi-info-circle-fill text-lg"></i>
+                <span>As a student-athlete, you can only view your own injury reports. Wellness logs are only visible to coaches and administrators.</span>
+            </div>
+
             <!-- Tabs -->
             <div class="tab-nav">
-                <button class="tab-btn active" onclick="switchTab('injuries')">Injury Reports</button>
-                <button class="tab-btn" onclick="switchTab('wellness')">Wellness Logs</button>
+                <button id="injuriesTab" class="tab-btn active" onclick="switchTab('injuries')">Injury Reports</button>
+                <button id="wellnessTab" class="tab-btn" onclick="switchTab('wellness')">Wellness Logs</button>
             </div>
 
             <!-- Table Section -->
@@ -314,9 +334,20 @@
             return getUserRole() === 'student';
         }
 
+        function isCoachOrAdmin() {
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
+        }
+
         function canEditHealthReports() {
             const role = getUserRole();
             return role === 'admin' || role === 'coach';
+        }
+
+        function canViewWellness() {
+            // Only coaches and admins can view wellness logs
+            const role = getUserRole();
+            return role === 'admin' || role === 'coach' || role === 'assistant_coach';
         }
 
         function checkAuth() {
@@ -362,18 +393,47 @@
             }
         }
 
-        function hideAddButtonForStudents() {
-            if (!canEditHealthReports()) {
-                const addBtn = document.getElementById('addReportBtn');
-                if (addBtn) {
-                    addBtn.style.display = 'none';
+        function applyRoleBasedUI() {
+            const statsSection = document.getElementById('statsSection');
+            const addReportBtn = document.getElementById('addReportBtn');
+            const wellnessTab = document.getElementById('wellnessTab');
+            const studentInfoBanner = document.getElementById('studentInfoBanner');
+            
+            if (isStudent()) {
+                // Hide stats for students
+                if (statsSection) statsSection.style.display = 'none';
+                // Hide Add Report button for students
+                if (addReportBtn) addReportBtn.style.display = 'none';
+                // Show info banner for students
+                if (studentInfoBanner) studentInfoBanner.style.display = 'flex';
+                // Disable Wellness tab for students
+                if (wellnessTab) {
+                    wellnessTab.classList.add('disabled');
                 }
+                // If student tries to access wellness tab, force injuries tab
+                if (currentTab === 'wellness') {
+                    currentTab = 'injuries';
+                }
+            } else {
+                // Show stats for coaches/admins
+                if (statsSection) statsSection.style.display = 'grid';
+                // Show Add Report button for coaches/admins
+                if (addReportBtn && canEditHealthReports()) {
+                    addReportBtn.style.display = 'flex';
+                } else if (addReportBtn) {
+                    addReportBtn.style.display = 'none';
+                }
+                // Enable Wellness tab for coaches/admins
+                if (wellnessTab) {
+                    wellnessTab.classList.remove('disabled');
+                }
+                // Hide info banner for coaches/admins
+                if (studentInfoBanner) studentInfoBanner.style.display = 'none';
             }
         }
 
         checkAuth();
         updateHeaderWithUser();
-        hideAddButtonForStudents();
 
         // ==========================================
         // 1. MOCK DATABASE
@@ -381,12 +441,14 @@
         let injuriesData = [
             { id: 1, athlete: "Marcus Davis", sport: "Football", type: "Hamstring Strain", status: "Recovering", date: "2026-09-28" },
             { id: 2, athlete: "James Williams", sport: "Soccer", type: "Ankle Sprain", status: "Active", date: "2026-10-01" },
-            { id: 3, athlete: "Sarah Johnson", sport: "Basketball", type: "Knee Injury", status: "Cleared", date: "2026-09-15" }
+            { id: 3, athlete: "Sarah Johnson", sport: "Basketball", type: "Knee Injury", status: "Cleared", date: "2026-09-15" },
+            { id: 4, athlete: "Student Athlete", sport: "Basketball", type: "Wrist Sprain", status: "Active", date: "2026-10-10" }
         ];
 
         let wellnessData = [
             { id: 1, athlete: "Sarah Johnson", sleep: "8 hrs", stress: "Low", notes: "Feeling great", date: "2026-10-02" },
-            { id: 2, athlete: "Marcus Davis", sleep: "6 hrs", stress: "Medium", notes: "Slight fatigue", date: "2026-10-02" }
+            { id: 2, athlete: "Marcus Davis", sleep: "6 hrs", stress: "Medium", notes: "Slight fatigue", date: "2026-10-02" },
+            { id: 3, athlete: "Student Athlete", sleep: "7 hrs", stress: "Low", notes: "Good day", date: "2026-10-10" }
         ];
 
         // Load from localStorage
@@ -426,11 +488,23 @@
 
             getInjuries: async () => {
                 loadFromStorage();
+                const userRole = getUserRole();
+                const userName = getUserName();
+                
+                // Students can only see their own injury reports
+                if (userRole === 'student') {
+                    return injuriesData.filter(i => i.athlete === userName);
+                }
+                // Coaches and admins see all injury reports
                 return injuriesData;
             },
 
             getWellnessLogs: async () => {
                 loadFromStorage();
+                // Only coaches and admins can view wellness logs
+                if (!canViewWellness()) {
+                    return [];
+                }
                 return wellnessData;
             },
 
@@ -458,7 +532,10 @@
         let currentTab = 'injuries';
 
         window.onload = function() {
-            loadStats();
+            applyRoleBasedUI();
+            if (!isStudent()) {
+                loadStats();
+            }
             loadTabData();
         };
 
@@ -479,45 +556,64 @@
                 thead.innerHTML = `<tr><th>Athlete</th><th>Sport</th><th>Injury Type</th><th>Date</th><th>Status</th></tr>`;
                 
                 const data = await api.getInjuries();
-                tbody.innerHTML = data.map(row => {
-                    let statusClass = 'status-active';
-                    if(row.status === 'Recovering') statusClass = 'status-recovering';
-                    if(row.status === 'Cleared') statusClass = 'status-cleared';
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">No injury reports found.</a></tr>`;
+                } else {
+                    tbody.innerHTML = data.map(row => {
+                        let statusClass = 'status-active';
+                        if(row.status === 'Recovering') statusClass = 'status-recovering';
+                        if(row.status === 'Cleared') statusClass = 'status-cleared';
 
-                    return `
-                        <tr>
-                            <td class="font-medium">${row.athlete}</td>
-                            <td>${row.sport}</td>
-                            <td>${row.type}</td>
-                            <td>${row.date}</td>
-                            <td><span class="status-badge ${statusClass}">${row.status}</span></td>
-                        </tr>
-                    `;
-                }).join('');
+                        return `
+                            <tr>
+                                <td class="font-medium">${row.athlete}</a>
+                                <td>${row.sport}</a>
+                                <td>${row.type}</a>
+                                <td>${row.date}</a>
+                                <td><span class="status-badge ${statusClass}">${row.status}</span></a>
+                            </tr>
+                        `;
+                    }).join('');
+                }
 
-            } else {
+            } else if (currentTab === 'wellness') {
                 title.innerText = "Wellness Logs";
                 thead.innerHTML = `<tr><th>Athlete</th><th>Sleep</th><th>Stress Level</th><th>Notes</th><th>Date</th></tr>`;
                 
                 const data = await api.getWellnessLogs();
-                tbody.innerHTML = data.map(row => `
-                    <tr>
-                        <td class="font-medium">${row.athlete}</td>
-                        <td>${row.sleep}</td>
-                        <td>${row.stress}</td>
-                        <td>${row.notes}</td>
-                        <td>${row.date}</td>
-                    </tr>
-                `).join('');
+                
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-gray-400">Wellness logs are only visible to coaches and administrators.</a></td>`;
+                } else {
+                    tbody.innerHTML = data.map(row => `
+                        <tr>
+                            <td class="font-medium">${row.athlete}</a>
+                            <td>${row.sleep}</a>
+                            <td>${row.stress}</a>
+                            <td>${row.notes}</a>
+                            <td>${row.date}</a>
+                        </tr>
+                    `).join('');
+                }
             }
         }
 
         function switchTab(tabName) {
+            // Prevent students from accessing wellness tab
+            if (tabName === 'wellness' && isStudent()) {
+                alert("Access Denied: Wellness logs are only available to coaches and administrators.");
+                return;
+            }
+            
             currentTab = tabName;
             
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                if(btn.innerText.toLowerCase().includes(tabName)) btn.classList.add('active');
-                else btn.classList.remove('active');
+                if (btn.innerText.toLowerCase().includes(tabName)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
             });
 
             loadTabData();
@@ -562,7 +658,9 @@
             
             if(result.success) {
                 closeModal();
-                loadStats();
+                if (!isStudent()) {
+                    loadStats();
+                }
                 loadTabData();
                 alert("Injury report added successfully!");
             } else {
